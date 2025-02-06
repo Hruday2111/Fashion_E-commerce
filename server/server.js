@@ -6,6 +6,7 @@ const app = express();
 require("dotenv").config();
 
 const profileRoutes = require('./routes/profileRoutes')
+const productRoutes = require('./routes/productRoutes')
 const cartRoutes = require('./routes/cartRoutes')
 
 app.use(
@@ -15,10 +16,11 @@ app.use(
   })
 );
 
-app.use('api/profile/',profileRoutes)
+app.use('/api/profile/',profileRoutes)
 
-app.use('api/cart/',cartRoutes)
+app.use('/api/cart/',cartRoutes)
 
+app.use('/api/product/',productRoutes)
 
 
 app.listen(process.env.PORT, () => {
