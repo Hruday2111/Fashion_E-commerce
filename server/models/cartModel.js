@@ -1,11 +1,9 @@
-// completed
-
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const cartSchema = new mongoose.Schema({
-    id:Number
-})
+    productId: { type: String, required: true },  // Reference to product.id
+    createdAt: { type: Date, default: Date.now }
+});
 
-const cart = mongoose.model('cart',cartSchema)
-
-module.exports = cart
+const cart = mongoose.model('Cart', cartSchema);
+module.exports = cart;
