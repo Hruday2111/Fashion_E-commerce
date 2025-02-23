@@ -59,7 +59,7 @@ const addtocart = async (req, res) => {
             await cartModel.create({ productId: id });
             res.status(200).json({ message: 'Product added to cart' });
         }
-    } 
+    }
     catch (error) {
         res.status(500).json({ error: 'Something went wrong', details: error.message });
     }
