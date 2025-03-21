@@ -18,6 +18,7 @@ const Navbar = () => {
         {/* Icons (Cart & User) */}
         <div className="nav-icons flex items-center space-x-4">
           <Link to="/cart" className="text-gray-600 hover:text-gray-900">Cart</Link>
+          <Link to="/profile">Profile</Link>
           <Link to="/login" className="text-gray-600 hover:text-gray-900">Login</Link>
         </div>
       </div>
