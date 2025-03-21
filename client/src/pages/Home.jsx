@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // import './Home.css';
 
 const Home = () => {
@@ -8,6 +9,7 @@ const Home = () => {
     const [cartItems, setCartItem] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -47,6 +49,10 @@ const Home = () => {
         fetchProducts();
     }, []);
 
+    const handleProductClick = (productId) => {
+        navigate(`/product/${productId}`);
+    };
+
     if (isLoading) {
         return <div className="loading-container">Loading...</div>;
     }
@@ -60,7 +66,12 @@ const Home = () => {
             <h3 className="category-title">{title}</h3>
             <div className="product-grid">
                 {products.map((item) => (
-                    <div key={item.id} className="product-card">
+                    <div 
+                        key={item.id} 
+                        className="product-card"
+                        onClick={() => handleProductClick(item.id)}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <img 
                             src={item.image_url} 
                             alt={item.productdisplayname}

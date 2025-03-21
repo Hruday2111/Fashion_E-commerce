@@ -18,6 +18,7 @@ const Navbar = () => {
         {/* Icons (Cart & User) */}
         <div className="nav-icons">
           <Link to="/cart">Cart</Link>
+          <Link to="/profile">Profile</Link>
           <Link to="/login">Login</Link>
         </div>
       </div>
