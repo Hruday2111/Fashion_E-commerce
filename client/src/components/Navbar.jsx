@@ -1,6 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Navbar = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate(); // Hook to navigate
+
+  // Function to handle search
+  const handleSearch = () => {
+    if (searchTerm.trim() !== "") {
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
   return (
     <nav className="navbar w-full bg-white shadow-md">
       <div className="navbar-container max-w-7xl mx-auto px-4 flex justify-between items-center py-4">
@@ -11,8 +22,19 @@ const Navbar = () => {
 
         {/* Search Bar */}
         <div className="search-bar flex items-center">
-          <input type="text" placeholder="Search for products..." className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-          <button className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Search</button>
+          <input
+            type="text"
+            placeholder="Search for products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button
+            onClick={handleSearch}
+            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Search
+          </button>
         </div>
 
         {/* Icons (Cart & User) */}
