@@ -6,15 +6,15 @@ const mongoose = require('mongoose')
 
 // get single product
 const singleproduct = async (req, res) => {
-    const { query } = req.query;//===================>>need to check and need to add user id thing
+    const { query } = req.query;//===================>>need to check and need to add userId thing
     try {
-        const item = await productModel.findOne({ id: query });
+        const item = await productModel.findOne({ productId: query });
         if (!item) {
             throw new Error('Product not found');
         }
         res.status(200).json(item);
         // have to placed before sending the response
-        // const interaction = userint.create({ id: id, type: 'click', interactionScore: 3 })
+        // const interaction = userint.create({ productId: productId, type: 'click', interactionScore: 3 })
         // await interaction.save();
         // console.log('Interaction logged successfully!');
     }

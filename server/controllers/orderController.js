@@ -1,21 +1,23 @@
 const Order = require('../models/orderModel');
 const userint=require('../models/userinteractionModel')
+
 const createOrder = async (req, res) => {
     try {
-        const { userId, id, paymentMethod, shippingAddress } = req.body;
+        const userId = req.userId
+        const { productId, paymentMethod, shippingAddress } = req.body;
 
-        if (!userId || !id || !paymentMethod || !shippingAddress) {
+        if (!userId || !productId || !paymentMethod || !shippingAddress) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
 
-        const existingOrder = await Order.findOne({ id });
+        const existingOrder = await Order.findOne({ productId });
         if (existingOrder) {
             return res.status(400).json({ message: 'Order ID already exists. Please use a unique order ID.' });
         }
         // Create a new order
         const order = new Order({
             userId,
-            id,
+            productId,
             paymentMethod,
             shippingAddress,
             paymentStatus: 'Pending',  
