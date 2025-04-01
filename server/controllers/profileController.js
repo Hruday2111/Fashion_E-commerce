@@ -24,33 +24,38 @@ const signup = async(req,res) => {
         console.log(error);
         return res.status(500).json({ message: "Server Error", error: error.message });
     }
-}   
+}
 
-const signin = async(req,res) =>{
-    try{
-        const {email, password} = req.body;
+const signin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
         // Find the user by email
-        const user = await profileModel.findOne({email: email});
-
-        // If user does not exist or password does not match, return error
-        if( !user || !(await user.comparePassword(password))){
-            return res.status(401).json({error: 'Invalid email or password'});
+        const user = await profileModel.findOne({ email });
+        if (!user || !(await user.comparePassword(password))) {
+            return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        // generate Token 
-        const payload = {
-            userId: user.userId
-        }
+        // Generate Token
+        const payload = { userId: user.userId };
         const token = generateToken(payload);
 
-        // resturn token as response
-        res.json({token})
-    }catch(err){
+        // Set token as an HttpOnly cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+            sameSite: 'lax', // Adjust as needed (could be 'strict')
+            maxAge: 3600000, // Cookie expires in 1 hour (adjust as needed)
+        });
+
+        // Return success response (you might include user info as needed)
+        res.json({ success: true, userId: user.userId });
+    } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+};
+
 
 const getProfileById = async(req,res) =>{
     try{

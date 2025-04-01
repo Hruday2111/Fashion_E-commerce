@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 const app = express();
 
 
@@ -12,10 +13,13 @@ const { jwtAuthMiddleware } = require("./middleware/jwtmiddleware");
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174", // frontend domain
+    credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   })
 );
+
+app.use(cookieParser());
 
 app.use(express.json());
 
@@ -23,7 +27,7 @@ app.use('/api/profile/',profileRoutes)
 
 app.use('/api/cart/', jwtAuthMiddleware,cartRoutes)
 
-app.use('/api/product/', jwtAuthMiddleware, productRoutes)
+app.use('/api/product/', productRoutes)
 
 
 app.listen(process.env.PORT, () => {
