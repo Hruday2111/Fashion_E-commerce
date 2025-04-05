@@ -31,15 +31,15 @@ app.use('/api/product/', productRoutes)
 
 
 app.listen(process.env.PORT, () => {
+  mongoose
+    .connect(process.env.MONGO_URL)
+    .then(() => {
+      console.log("Atlas Database connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   console.log("Server running at port " + process.env.PORT);
 });
-// console.log("MongoDB URI:", process.env.MONGO_URL);
+console.log("MongoDB URI:", process.env.MONGO_URL);
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("Atlas Database connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });

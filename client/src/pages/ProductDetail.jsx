@@ -25,6 +25,35 @@ const ProductDetails = () => {
         fetchProduct();
     }, [id]);
 
+    const handleCartClick = async () => {
+        try {
+            // Send POST request to add item to cart
+            
+            const response = await fetch(`http://localhost:4000/api/cart/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body:JSON.stringify({userId:"U016"})
+            });
+            console.log(response);
+        
+            if (!response.ok) {
+                throw new Error('Failed to add item to cart');
+            }
+        
+            // Optional: Show success message
+            alert('Item added to cart successfully!');
+            
+            // Navigate to cart page
+            navigate('/cart');
+        } catch (error) {
+            console.error('Error adding item to cart:', error);
+            // alert('Failed to add item to cart. Please try again.');
+        }
+    };
+
+
     if (loading) return <p className="text-center text-gray-500 text-lg">Loading...</p>;
     if (error) return <p className="text-center text-red-500 text-lg">Error: {error}</p>;
 
@@ -48,10 +77,14 @@ const ProductDetails = () => {
 
                     {/* Buttons */}
                     <div className="flex gap-4 mt-4">
-                        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md">
+                        <button 
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
+                            onClick={() => handleCartClick()}
+                            style={{ cursor: 'pointer' }}>
                             Add to Cart
                         </button>
-                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md">
+                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
+                        >
                             Buy Now
                         </button>
                     </div>

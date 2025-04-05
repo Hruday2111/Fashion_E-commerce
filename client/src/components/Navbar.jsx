@@ -1,9 +1,31 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import profileIcon from "./profile.svg";
 
 const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [loggedin,setloggedin]=useState(false);
   const navigate = useNavigate(); // Hook to navigate
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+        try {
+            const response = await fetch("http://localhost:4000/api/profile/", {
+                method: "GET",
+                credentials: "include", // Ensures cookies (JWT) are sent with the request
+            });
+            if (response.ok){
+              setloggedin(true);
+            };
+            // const data = await response.json();
+            // setUser(data);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+    fetchUserProfile();
+}, []);
 
   // Function to handle search
   const handleSearch = () => {
@@ -12,46 +34,79 @@ const Navbar = () => {
     }
   };
 
+
+  if (error) return <p className="text-center text-red-500 text-lg">Error: {error}</p>;
+  
   return (
-    <nav className="navbar w-full bg-white shadow-md">
-      <div className="navbar-container max-w-7xl mx-auto px-4 flex justify-between items-center py-4">
-        {/* Logo */}
-        <div className="logo text-3xl font-bold text-gray-800">
-          <Link to="/" className="hover:text-gray-900">ShopEase</Link>
-        </div>
+    <nav className="w-full bg-gradient-to-r from-blue-50 to-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 transition-all">
+              ShopEase
+            </Link>
+          </div>
 
-        {/* Search Bar */}
-        <div className="search-bar flex items-center">
-          <input
-            type="text"
-            placeholder="Search for products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <button
-            onClick={handleSearch}
-            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Search
-          </button>
-        </div>
+          {/* Search Bar */}
+          <div className="flex-1 max-w-md mx-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search for products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
+              />
+              <button
+                onClick={handleSearch}
+                className="absolute right-0 top-0 h-full px-4 bg-blue-600 text-white rounded-r-full hover:bg-blue-700 transition-colors text-base font-medium"
+              >
+                Search
+              </button>
+            </div>
+          </div>
 
-        {/* Icons (Cart & User) */}
-        <div className="nav-icons flex items-center space-x-4">
-          <Link to="/cart" className="text-gray-600 hover:text-gray-900">Cart</Link>
-          <Link to="/profile">Profile</Link>
-          <Link to="/login" className="text-gray-600 hover:text-gray-900">Login</Link>
+          {/* Icons (Cart & User) */}
+          <div className="flex items-center space-x-6">
+            <Link to="/cart" className="text-gray-700 hover:text-blue-600 font-medium text-base transition-colors flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Cart
+            </Link>
+            {loggedin && <Link to="/profile" className="text-gray-700 hover:text-blue-600 transition-colors">
+              <img src={profileIcon} alt="Profile" className="w-7 h-7" />
+            </Link>}
+            {!loggedin && <Link to="/login" className="text-base bg-white text-blue-600 border border-blue-600 px-5 py-2 rounded-full hover:bg-blue-600 hover:text-white transition-all font-medium">
+              Login
+            </Link>}
+            
+          </div>
         </div>
       </div>
 
       {/* Navigation Links */}
-      <div className="nav-links flex justify-center space-x-8 py-3">
-        <ul className="flex justify-center space-x-8 py-3">
-          <li><Link to="/" className="text-gray-600 hover:text-gray-900">Home</Link></li>
-          <li><Link to="/categories" className="text-gray-600 hover:text-gray-900">Categories</Link></li>
-          <li><Link to="/offers" className="text-gray-600 hover:text-gray-900">Offers</Link></li>
-        </ul>
+      <div className="border-t border-gray-100 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <ul className="flex justify-center space-x-12 py-3 text-base font-medium">
+            <li>
+              <Link to="/" className="text-gray-700 hover:text-blue-600 px-2 py-1 transition-colors border-b-2 border-transparent hover:border-blue-600">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/categories" className="text-gray-700 hover:text-blue-600 px-2 py-1 transition-colors border-b-2 border-transparent hover:border-blue-600">
+                Categories
+              </Link>
+            </li>
+            <li>
+              <Link to="/offers" className="text-gray-700 hover:text-blue-600 px-2 py-1 transition-colors border-b-2 border-transparent hover:border-blue-600">
+                Offers
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
   );
