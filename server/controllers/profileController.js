@@ -1,5 +1,6 @@
 const profileModel = require('../models/profileModel')
 const {generateToken} = require('../middleware/jwtmiddleware')
+const jwt = require('jsonwebtoken')
 
 const signup = async(req,res) => {
     try{ 
@@ -56,6 +57,21 @@ const signin = async (req, res) => {
     }
 };
 
+const signedIn = async (req, res) => {
+    const token = req.cookies?.token;
+    if (!token) return res.json({ success: false });
+    console.log("Extracted Token:", token); // Log extracted token
+  
+    try {
+        const user = jwt.verify(token, process.env.JWT_Secret);
+        res.json({ success: true, user });
+      } catch (err) {
+        console.error("JWT Error:", err); // <- this will give you the actual cause
+        res.json({ success: false });
+      }
+      
+  };
+  
 
 const getProfileById = async (req, res) => {
     try {
@@ -77,4 +93,4 @@ const getProfileById = async (req, res) => {
     }
 };
 
-module.exports = {signup,signin,getProfileById}
+module.exports = {signup,signin,getProfileById,signedIn}

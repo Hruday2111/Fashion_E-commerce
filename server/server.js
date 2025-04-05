@@ -30,7 +30,6 @@ app.use('/api/cart/', jwtAuthMiddleware,cartRoutes)
 
 app.use('/api/product/', productRoutes)
 
-
 app.listen(process.env.PORT, () => {
   mongoose
     .connect(process.env.MONGO_URL)

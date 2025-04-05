@@ -51,7 +51,7 @@ const Navbar = () => {
 
           {/* Icons (Cart & User) */}
           <div className="flex items-center space-x-6">
-            <Link
+            {(isLoggedIn && <Link
               to="/cart"
               className="text-gray-700 hover:text-blue-600 font-medium text-base transition-colors flex items-center"
             >
@@ -71,6 +71,7 @@ const Navbar = () => {
               </svg>
               Cart
             </Link>
+            )}
 
 
             {isLoggedIn ? (
