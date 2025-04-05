@@ -147,18 +147,6 @@ const Home = () => {
                 setSummer(summer);
                 setAccessory(access);
 
-                // Attempt to fetch cart only if the user is authenticated
-                const cartResponse = await fetch("http://localhost:4000/api/cart/", {
-                    method: "GET",
-                    credentials: "include", // Includes cookies in the request
-                });
-
-                if (cartResponse.ok) {
-                    const cart = await cartResponse.json();
-                    setCartItem(cart);
-                } else {
-                    console.warn("User not authenticated, skipping cart fetch.");
-                }
             } catch (err) {
                 setError(err.message);
                 console.error("Error fetching data:", err);

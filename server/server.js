@@ -13,9 +13,10 @@ const { jwtAuthMiddleware } = require("./middleware/jwtmiddleware");
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"], // frontend domain
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"], // Added OPTIONS for preflight requests
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 

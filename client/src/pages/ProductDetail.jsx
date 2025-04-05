@@ -28,16 +28,14 @@ const ProductDetails = () => {
     const handleCartClick = async () => {
         try {
             // Send POST request to add item to cart
-            
-            const response = await fetch(`http://localhost:4000/api/cart/add`, {
+            const response = await fetch(`http://localhost:4000/api/cart/add/?query=${id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body:JSON.stringify({userId:"U016"})
+                credentials: 'include' // Important for sending cookies/auth tokens
             });
             console.log(response);
-        
             if (!response.ok) {
                 throw new Error('Failed to add item to cart');
             }
