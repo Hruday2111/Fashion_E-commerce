@@ -17,8 +17,13 @@ const jwt = require('jsonwebtoken')
 // }
 
 const jwtAuthMiddleware = (req, res, next) => {
+  // Log the entire cookies object
+  console.log("Cookies received:", req.cookies);
+
   // Extract token from cookies
-  const token = req.cookies.token;
+  const token = req.cookies?.token;
+  console.log("Extracted Token:", token); // Log extracted token
+
   if (!token) {
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
@@ -26,7 +31,9 @@ const jwtAuthMiddleware = (req, res, next) => {
   try {
     // Verify token using your secret
     const decoded = jwt.verify(token, process.env.JWT_Secret);
-    req.userId = decoded.userId; // Attach user info to request, adjust as needed
+    console.log("Decoded Token Payload:", decoded); // Log decoded payload
+
+    req.userId = decoded.userId; // Attach userId to request
     next();
   } catch (err) {
     console.error('JWT verification error:', err);

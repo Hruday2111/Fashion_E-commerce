@@ -57,16 +57,24 @@ const signin = async (req, res) => {
 };
 
 
-const getProfileById = async(req,res) =>{
-    try{
-        const userId = req.userId
-        console.log(userId)
-        const user = await profileModel.findOne({userId: userId})
-        res.status(200).json({ user :user})
-    }
-    catch(error){
-        console.log(error);
+const getProfileById = async (req, res) => {
+    try {
+        const userId = req.userId;
+        console.log('Checking for user with userId:', userId);
+
+        const user = await profileModel.findOne({ userId: userId });
+
+        if (!user) {
+            console.log('User not found');  // ✅ Debugging
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        console.log('User found:', user);  // ✅ Debugging
+        res.status(200).json({ user: user });
+    } catch (error) {
+        console.log('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+};
+
 module.exports = {signup,signin,getProfileById}
