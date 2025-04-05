@@ -75,17 +75,20 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 
+import { useAuth } from "../context/AuthContext"; // Import it
+
 export default function LoginPage() {
+  const { setIsLoggedIn } = useAuth(); // Get the setter
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       const response = await fetch('http://localhost:4000/api/profile/signin', {
         method: 'POST',
-        credentials: 'include', // Ensures cookies are sent and stored
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -94,12 +97,11 @@ export default function LoginPage() {
           password: data.password
         })
       });
-      
+
       const result = await response.json();
       if (response.ok && result.success) {
         alert(`Logged in as ${data.email}`);
-        
-        // Redirect to home page
+        setIsLoggedIn(true); // Update global login state
         navigate("/");
       } else {
         alert(result.error || 'Login failed');
