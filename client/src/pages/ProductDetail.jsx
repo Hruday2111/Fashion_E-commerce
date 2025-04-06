@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const ProductDetails = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -28,7 +30,7 @@ const ProductDetails = () => {
     const handleCartClick = async () => {
         try {
             // Send POST request to add item to cart
-            const response = await fetch(`http://localhost:4000/api/cart/add/?query=${id}`, {
+            const response = await fetch(`http://localhost:4000/api/cart/add/?productId=${id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
