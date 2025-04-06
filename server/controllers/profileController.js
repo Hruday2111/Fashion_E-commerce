@@ -34,7 +34,7 @@ const signin = async (req, res) => {
         // Find the user by email
         const user = await profileModel.findOne({ email });
         if (!user || !(await user.comparePassword(password))) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'dudeeeeeee Invalid email or password' });
         }
 
         // Generate Token
@@ -70,27 +70,71 @@ const signedIn = async (req, res) => {
         res.json({ success: false });
       }
       
-  };
+};
   
-
 const getProfileById = async (req, res) => {
     try {
         const userId = req.userId;
-        console.log('Checking for user with userId:', userId);
 
         const user = await profileModel.findOne({ userId: userId });
 
         if (!user) {
-            console.log('User not found');  // ✅ Debugging
             return res.status(404).json({ error: 'User not found' });
         }
 
-        console.log('User found:', user);  // ✅ Debugging
         res.status(200).json({ user: user });
     } catch (error) {
-        console.log('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
-module.exports = {signup,signin,getProfileById,signedIn}
+const updateProfileById = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { oldPassword, newPassword, ...updates } = req.body;
+
+        if (!userId) {
+            return res.status(401).json({ error: 'User not authenticated' });
+        }
+
+        const user = await profileModel.findOne({ userId });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        
+        // Update other fields
+        for (const key in updates) {
+            if (updates.hasOwnProperty(key)) {
+                user[key] = updates[key];
+            }
+        }
+        
+        // Handle password change
+        if (oldPassword && newPassword) {
+            const isPasswordCorrect = await user.comparePassword(oldPassword);
+            if (!isPasswordCorrect) {
+                return res.status(400).json({ error: 'Old password is incorrect' });
+            }
+
+            user.password = newPassword; // triggers pre-save hook
+        }
+
+        await user.save(); // Save the updated user
+
+        res.status(200).json({ message: 'Profile updated successfully', user });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+};
+
+const logout = async (req,res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+}
+
+module.exports = {signup,signin,getProfileById,signedIn,updateProfileById,logout}
