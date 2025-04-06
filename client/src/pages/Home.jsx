@@ -111,6 +111,11 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import { Autoplay } from 'swiper/modules';
+// import { Tiktok, Spotify } from 'lucide-react';
 
 const Home = () => {
     const [winterCollection, setWinter] = useState([]);
@@ -180,12 +185,35 @@ const Home = () => {
         return <div className="bg-red-50 border-l-4 border-red-500 p-4 m-4 text-red-700">Error: {error}</div>;
     }
 
+    const slides = [
+        {
+            title: 'Elevate Your Style',
+            subtitle: 'Discover curated collections for every season',
+        },
+        {
+            title: 'Spring Collection',
+            subtitle: 'Fresh looks blooming this season',
+        },
+        {
+            title: 'Summer Essentials',
+            subtitle: 'Stay cool and stylish in the heat',
+        },
+        {
+            title: 'Autumn Trends',
+            subtitle: 'Warm colors and bold patterns',
+        },
+        {
+            title: 'Winter Wonders',
+            subtitle: 'Cozy fits for the chilly vibes',
+        },
+    ];
+
     const ProductList = ({ products, title }) => (
         <div className="category-section mb-16">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-800">{title}</h3>
                 <a href={`/shop/${title.toLowerCase().replace(" collection", "")}`} className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                    View All 
+                    View All
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                     </svg>
@@ -193,15 +221,15 @@ const Home = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.map((item, index) => (
-                    <div 
+                    <div
                         key={item.productId || `product-${index}`}
                         className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
                         onClick={() => handleProductClick(item.productId)}
                         style={{ cursor: 'pointer' }}
                     >
                         <div className="relative pb-[125%] overflow-hidden">
-                            <img 
-                                src={item.image_url} 
+                            <img
+                                src={item.image_url}
                                 alt={item.productdisplayname}
                                 className="absolute inset-0 w-full h-full object-cover"
                             />
@@ -222,42 +250,59 @@ const Home = () => {
             </div>
         </div>
     );
-    
+
     return (
         <div className="bg-gray-50 min-h-screen">
             <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center max-w-3xl mx-auto">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">Elevate Your Style</h1>
-                        <p className="text-xl md:text-2xl opacity-90 mb-8">Discover curated collections for every season</p>
-                        <div className="flex justify-center space-x-4">
-                            <a href="/shop" className="inline-flex items-center bg-white text-blue-700 font-bold px-8 py-3 rounded-lg shadow-md hover:bg-blue-50 transition-colors">
-                                Shop Now
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                            </a>
-                            <a href="/collections" className="inline-flex items-center border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-blue-700 transition-colors">
-                                View Collections
-                            </a>
-                        </div>
-                    </div>
+                    <Swiper
+                        modules={[Autoplay]}
+                        autoplay={{ delay: 2000, disableOnInteraction: false }}
+                        loop
+                        className="max-w-3xl mx-auto text-center"
+                    >
+                        {slides.map((slide, index) => (
+                            <SwiperSlide key={index}>
+                                <div>
+                                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                                        {slide.title}
+                                    </h1>
+                                    <p className="text-xl md:text-2xl opacity-90 mb-8">
+                                        {slide.subtitle}
+                                    </p>
+                                    <div className="flex justify-center space-x-4">
+                                        <a
+                                            href="/shop"
+                                            className="inline-flex items-center bg-white text-blue-700 font-bold px-8 py-3 rounded-lg shadow-md hover:bg-blue-50 transition-colors"
+                                        >
+                                            Shop Now
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="h-5 w-5 ml-2"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </a>
+                                        <a
+                                            href="/collections"
+                                            className="inline-flex items-center border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-blue-700 transition-colors"
+                                        >
+                                            View Collections
+                                        </a>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
                 </div>
             </section>
-            
-            <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                    <span className="uppercase tracking-wider text-blue-600 font-medium">Categories</span>
-                    <h2 className="text-3xl md:text-4xl font-bold mt-2 text-gray-900">Shop by Collection</h2>
-                </div>
-                
-                <div className="space-y-16">
-                    <ProductList products={winterCollection} title="Winter Collection" />
-                    <ProductList products={summerCollection} title="Summer Collection" />
-                    <ProductList products={accessories} title="Accessories" />
-                </div>
-            </section>
-            
+
             <section className="bg-blue-50 py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -288,6 +333,139 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            <section className="bg-white py-10">
+                <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-6">
+
+                    {/* Banner 1 */}
+                    <div className="bg-yellow-300 flex rounded-md overflow-hidden shadow-md">
+                        <div className="flex-1 p-6">
+                            <h2 className="text-2xl font-extrabold text-red-800">FLAT ₹300 OFF*</h2>
+                            <p className="text-black mt-1">On All Products</p>
+                        </div>
+                        <div className="w-px bg-white/50 my-4"></div>
+                        <div className="flex items-center px-6 bg-yellow-400">
+                            <div className="text-center">
+                                <p className="text-sm text-gray-800 mb-1">USE CODE:</p>
+                                <div className="bg-red-900 text-white font-semibold px-4 py-1 rounded-sm">
+                                    SHOPEASE300
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Banner 2 */}
+                    <div className="bg-yellow-300 flex rounded-md overflow-hidden shadow-md">
+                        <div className="flex-1 p-6">
+                            <h2 className="text-2xl font-extrabold text-red-800">FLAT ₹200 OFF*</h2>
+                            <p className="text-black mt-1">On All Products</p>
+                        </div>
+                        <div className="w-px bg-white/50 my-4"></div>
+                        <div className="flex items-center px-6 bg-yellow-400">
+                            <div className="text-center">
+                                <p className="text-sm text-gray-800 mb-1">USE CODE:</p>
+                                <div className="bg-red-900 text-white font-semibold px-4 py-1 rounded-sm">
+                                    SHOPEASE200
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-12">
+                    <span className="uppercase tracking-wider text-blue-600 font-medium">Categories</span>
+                    <h2 className="text-3xl md:text-4xl font-bold mt-2 text-gray-900">Shop by Collection</h2>
+                </div>
+
+                <div className="space-y-16">
+                    <ProductList products={winterCollection} title="Winter Collection" />
+                    <ProductList products={summerCollection} title="Summer Collection" />
+                    <ProductList products={accessories} title="Accessories" />
+                </div>
+            </section>
+
+            <section className="bg-gray-100 text-gray-800 px-6 py-12">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+                    {/* Shop */}
+                    <div>
+                        <h2 className="font-semibold mb-3">Shop</h2>
+                        <ul className="space-y-2">
+                            <li>Men</li>
+                            <li>Women</li>
+                            {/* <li>Baby</li> */}
+                            <li>Kids</li>
+                            <li>Accesories</li>
+
+                            {/* <li>Home</li>
+                            <li>Magazine</li> */}
+                        </ul>
+                    </div>
+
+                    {/* Corporate Info */}
+                    <div>
+                        <h2 className="font-semibold mb-3">Corporate Info</h2>
+                        <ul className="space-y-2">
+                            {/* <li>Career at H&M</li> */}
+                            <li>About SHOPEASE group</li>
+                            {/* <li>Sustainability H&M Group</li> */}
+                            <li>Press</li>
+                            <li>Investor relations</li>
+                            <li>Corporate governance</li>
+                        </ul>
+                    </div>
+
+                    {/* Help */}
+                    <div>
+                        <h2 className="font-semibold mb-3">Help</h2>
+                        <ul className="space-y-2">
+                            <li>Customer Service</li>
+                            {/* <li>My H&M</li>
+                            <li>Find a store</li> */}
+                            <li>Legal & privacy</li>
+                            <li>Contact</li>
+                            {/* <li>Secure shopping</li>
+                            <li>Cookie Notice</li> */}
+                            {/* <li className="text-blue-600 font-medium">Cookie Settings</li> */}
+                        </ul>
+                    </div>
+
+                    {/* Signup Info */}
+                    {/* <div>
+                        <p className="mb-4">
+                            Sign up now and be the first to know about exclusive offers, latest fashion news & style tips!
+                        </p>
+                        <a href="#" className="underline font-semibold text-black">Read more →</a>
+                    </div> */}
+                </div>
+
+                {/* Socials & Legal */}
+                <div className="mt-12 flex flex-col items-center gap-4 text-center text-xs text-gray-500">
+                    {/* <div className="flex gap-4 text-black text-lg">
+                        <Instagram />
+                        <Tiktok />
+                        <Spotify />
+                        <Youtube />
+                        <Pinterest />
+                        <Facebook /> */}
+                    {/* </div>  */}
+
+                    <p>
+                        The content of this site is copyright-protected and is the property of SHOPEASE
+                    </p>
+
+                    {/* <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/5/53/H%26M-Logo.svg"
+                        alt="H&M Logo"
+                        className="h-6 mt-2"
+                    /> */}
+               <h1 className="text-red-700 text-l font-bold">SHOPEASE</h1>
+                    <p className="font-semibold mt-1">INDIA</p>
+                </div>
+            </section>
+
         </div>
     );
 };
