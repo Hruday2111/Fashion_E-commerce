@@ -1,170 +1,466 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 
-const OrderConfirmation = () => {
-    const navigate = useNavigate();
-    const [orderDetails, setOrderDetails] = useState(null);
-    const [addresses, setAddresses] = useState([]);
-    const [selectedAddress, setSelectedAddress] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+// import { useParams } from 'react-router-dom';
+// import { useEffect, useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
 
-    // Simulated product and price details
-    const product = {
-        name: "Product Name",
-        price: 183,
-        quantity: 1
-    };
+// export default function Checkout() {
+//   const { id } = useParams();
+//   const navigate = useNavigate();
+//   const [product, setProduct] = useState(null);
+//   const [quantity, setQuantity] = useState(1);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchOrderData = async () => {
-            try {
-                // Fetch user addresses
-                const addressResponse = await fetch('http://localhost:4000/api/user/addresses');
-                const addressData = await addressResponse.json();
-                setAddresses(addressData);
+//   useEffect(() => {
+//     // Check if id exists before making API call
+//     if (!id) {
+//       setError("Product ID is missing");
+//       setLoading(false);
+//       return;
+//     }
 
-                // If no addresses found, set loading to false
-                if (addressData.length > 0) {
-                    setSelectedAddress(addressData[0]);
-                }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+//     console.log("Checkout ID:", id);
 
-        fetchOrderData();
-    }, []);
+//     const fetchProduct = async () => {
+//       try {
+//         const res = await fetch(`http://localhost:4000/api/product/getProductById?query=${id}`);
+//         if (!res.ok) throw new Error("Failed to fetch product");
+        
+//         const data = await res.json();
+//         setProduct(data);
+//       } catch (err) {
+//         setError(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
 
-    const handlePlaceOrder = async () => {
-        try {
-            const orderData = {
-                userId: "U016", // hardcoded for example
-                productId: "P123", // hardcoded for example
-                shippingAddress: selectedAddress,
-                paymentMethod: "Credit Card", // This would typically come from user selection
-                totalAmount: calculateTotalAmount()
-            };
+//     fetchProduct();
+//   }, [id]);
 
-            const response = await fetch('http://localhost:4000/api/orders/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderData)
-            });
+//   const handleQuantityChange = (delta) => {
+//     setQuantity((prev) => Math.max(1, prev + delta));
+//   };
 
-            if (!response.ok) {
-                throw new Error('Failed to place order');
-            }
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     // Handle checkout logic here
+//     alert('Order placed successfully!');
+//     navigate('/');
+//   };
 
-            const orderResult = await response.json();
-            
-            // Navigate to order confirmation or thank you page
-            navigate(`/order-confirmation/${orderResult.orderId}`);
-        } catch (error) {
-            console.error('Order placement error:', error);
-            alert('Failed to place order. Please try again.');
+//   // Handle missing ID case
+//   if (!id) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 p-6 md:p-12">
+//         <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6">
+//           <p className="text-center text-red-500 text-lg">Product ID is missing. Please navigate from a valid product.</p>
+//           <button
+//             onClick={() => navigate('/')}
+//             className="mt-4 block mx-auto text-blue-600 hover:underline"
+//           >
+//             ← Back to Home
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   if (loading) return <div className="text-center mt-10">Loading product...</div>;
+//   if (error) return <div className="text-center mt-10 text-red-500">Error: {error}</div>;
+//   if (!product) return <div className="text-center mt-10">Product not found</div>;
+
+//   const totalPrice = product.price * quantity;
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 p-6 md:p-12">
+//       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg grid md:grid-cols-3 gap-8 p-6">
+//         {/* Product & Cart Section */}
+//         <div className="md:col-span-2">
+//           <h2 className="text-2xl font-bold mb-6">Shopping Cart</h2>
+
+//           <div className="flex items-center justify-between border-b pb-4 mb-4">
+//             <div className="flex items-center gap-4">
+//               <img
+//                 src={product.image_url || 'https://via.placeholder.com/100'}
+//                 alt={product.productdisplayname}
+//                 className="w-20 h-20 rounded-md object-cover"
+//               />
+//               <div>
+//                 <h4 className="font-semibold">{product.productdisplayname}</h4>
+//                 <p className="text-gray-500 text-sm">Category: {product.mastercategory}</p>
+//               </div>
+//             </div>
+
+//             <div className="flex items-center gap-4">
+//               <button
+//                 className="bg-gray-200 px-2 rounded"
+//                 onClick={() => handleQuantityChange(-1)}
+//               >
+//                 -
+//               </button>
+//               <span>{quantity}</span>
+//               <button
+//                 className="bg-gray-200 px-2 rounded"
+//                 onClick={() => handleQuantityChange(1)}
+//               >
+//                 +
+//               </button>
+//             </div>
+
+//             <p className="font-medium text-right">₹{totalPrice.toFixed(2)}</p>
+//           </div>
+
+//           <div className="flex justify-between mt-6 text-lg">
+//             <span className="text-gray-600">Subtotal</span>
+//             <span className="font-semibold">₹{totalPrice.toFixed(2)}</span>
+//           </div>
+//           <div className="flex justify-between text-lg">
+//             <span className="text-gray-600">Shipping</span>
+//             <span className="font-semibold">Free</span>
+//           </div>
+
+//           <div className="flex justify-between text-xl font-bold mt-4 pt-4 border-t">
+//             <span>Total</span>
+//             <span>₹{totalPrice.toFixed(2)}</span>
+//           </div>
+
+//           <button
+//             onClick={() => navigate('/')}
+//             className="mt-6 inline-block text-blue-600 hover:underline"
+//           >
+//             ← Continue Shopping
+//           </button>
+//         </div>
+
+//         {/* Payment Info */}
+//         <div className="bg-gray-200 p-6 rounded-lg">
+//           <h2 className="text-2xl font-bold mb-6">Payment Info.</h2>
+
+//           <form className="space-y-4" onSubmit={handleSubmit}>
+//             <div>
+//               <label className="block text-black mb-1">Payment Method</label>
+//               <div className="flex items-center gap-4">
+//                 <label className="flex items-center gap-2">
+//                   <input type="radio" name="method" defaultChecked /> Credit Card
+//                 </label>
+//                 <label className="flex items-center gap-2">
+//                   <input type="radio" name="method" /> PayPal
+//                 </label>
+//               </div>
+//             </div>
+
+//             <div>
+//               <label className="block  text-black mb-1">Name on Card</label>
+//               <input
+//                 type="text"
+//                 className="w-full border rounded px-3 py-2"
+//                 placeholder="John Carter"
+//                 required
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block  text-black mb-1">Card Number</label>
+//               <input
+//                 type="text"
+//                 className="w-full border rounded px-3 py-2"
+//                 placeholder="1234 5678 9012 3456"
+//                 required
+//               />
+//             </div>
+
+//             <div className="flex gap-4">
+//               <div className="flex-1">
+//                 <label className="block  text-black mb-1">Expiration Date</label>
+//                 <input
+//                   type="text"
+//                   className="w-full border rounded px-3 py-2"
+//                   placeholder="MM/YY"
+//                   required
+//                 />
+//               </div>
+//               <div className="flex-1">
+//                 <label className="block  text-black mb-1">CVV</label>
+//                 <input
+//                   type="text"
+//                   className="w-full border rounded px-3 py-2"
+//                   placeholder="123"
+//                   required
+//                 />
+//               </div>
+//             </div>
+
+//             <button
+//               type="submit"
+//               className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+//             >
+//               Check Out
+//             </button>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+export default function Checkout() {
+  const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/cart/', {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error("User not authenticated");
+          }
+          throw new Error("Failed to fetch cart items");
         }
+
+        const data = await response.json();
+        
+        if (data.message === "Your cart is empty") {
+          setCartItems([]);
+        } else {
+          // Add quantity property to each item (same as in Cart component)
+          const itemsWithQuantity = data.map(item => ({
+            ...item,
+            quantity: 1 // Default quantity since your model doesn't track quantity
+          }));
+          setCartItems(itemsWithQuantity);
+          calculateTotal(itemsWithQuantity);
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const calculateTotalAmount = () => {
-        const price = product.price;
-        const platformFee = 3;
-        const deliveryCharges = 40;
-        return price + platformFee + (deliveryCharges === 0 ? 0 : deliveryCharges);
-    };
+    fetchCartItems();
+  }, []);
 
-    if (loading) return <p className="text-center text-gray-500 text-lg">Loading...</p>;
-    if (error) return <p className="text-center text-red-500 text-lg">Error: {error}</p>;
+  const calculateTotal = (items) => {
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = Math.round(subtotal * 0.1);
+    const deliveryCharges = subtotal > 1000 ? 0 : 40;
+    const total = subtotal - discount + deliveryCharges;
+    setTotalPrice(total);
+  };
 
+  const handleQuantityChange = (productId, delta) => {
+    const updatedItems = cartItems.map(item => {
+      if (item.productId === productId) {
+        const newQuantity = Math.max(1, item.quantity + delta);
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    
+    setCartItems(updatedItems);
+    calculateTotal(updatedItems);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle checkout logic here
+    alert('Order placed successfully!');
+    navigate('/');
+  };
+
+  if (loading) return <div className="text-center mt-10">Loading cart items...</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">Error: {error}</div>;
+  
+  if (cartItems.length === 0) {
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-gray-50 shadow-lg rounded-lg mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Left Column - Login */}
-                <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h2 className="text-xl font-bold mb-4">1. LOGIN</h2>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <p className="font-semibold">Aditya Kumar Prasad</p>
-                            <p>+91 9142589701</p>
-                        </div>
-                        <button className="text-blue-600 font-semibold">CHANGE</button>
-                    </div>
-                </div>
-
-                {/* Middle Column - Delivery Address */}
-                <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h2 className="text-xl font-bold mb-4">2. DELIVERY ADDRESS</h2>
-                    {addresses.map((address, index) => (
-                        <div 
-                            key={index} 
-                            className={`p-3 mb-2 border rounded-lg cursor-pointer ${
-                                selectedAddress === address 
-                                    ? 'border-blue-500 bg-blue-50' 
-                                    : 'border-gray-300'
-                            }`}
-                            onClick={() => setSelectedAddress(address)}
-                        >
-                            <p className="font-semibold">{address.fullName}</p>
-                            <p>{address.street}</p>
-                            <p>{`${address.city}, ${address.state} - ${address.zipCode}`}</p>
-                            <p>Phone: {address.phone}</p>
-                        </div>
-                    ))}
-                    <button className="text-blue-600 font-semibold mt-2">+ Add a new address</button>
-                </div>
-
-                {/* Right Column - Price Details */}
-                <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h2 className="text-xl font-bold mb-4">PRICE DETAILS</h2>
-                    <div className="space-y-2">
-                        <div className="flex justify-between">
-                            <span>Price (1 item)</span>
-                            <span>₹{product.price}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span>Delivery Charges</span>
-                            <span className="text-green-600">₹40 FREE</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span>Platform Fee</span>
-                            <span>₹3</span>
-                        </div>
-                        <hr className="my-2" />
-                        <div className="flex justify-between font-bold">
-                            <span>Total Payable</span>
-                            <span>₹{calculateTotalAmount()}</span>
-                        </div>
-                        <p className="text-green-600 text-sm">Your Total Savings on this order ₹813</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Payment and Order Placement */}
-            <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
-                <div className="flex items-center">
-                    <input 
-                        type="checkbox" 
-                        className="mr-2" 
-                        id="termsAgreement" 
-                    />
-                    <label htmlFor="termsAgreement" className="text-sm">
-                        By continuing with the order, you confirm that you are above 18 years of age, 
-                        and you agree to the Flipkart's Terms of Use and Privacy Policy
-                    </label>
-                </div>
-                <button 
-                    onClick={handlePlaceOrder}
-                    className="w-full mt-4 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
-                >
-                    Place Order
-                </button>
-            </div>
+      <div className="min-h-screen bg-gray-50 p-6 md:p-12">
+        <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6">
+          <p className="text-center text-gray-500 text-lg">Your cart is empty. Please add items to proceed with checkout.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-4 block mx-auto text-blue-600 hover:underline"
+          >
+            ← Continue Shopping
+          </button>
         </div>
+      </div>
     );
-};
+  }
 
-export default OrderConfirmation;
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discount = Math.round(subtotal * 0.1);
+  const deliveryCharges = subtotal > 1000 ? 0 : 40;
+  const finalTotal = subtotal - discount + deliveryCharges;
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6 md:p-12">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg grid md:grid-cols-3 gap-8 p-6">
+        {/* Product & Cart Section */}
+        <div className="md:col-span-2">
+          <h2 className="text-2xl font-bold mb-6">Shopping Cart</h2>
+
+          {/* Cart Items */}
+          <div className="space-y-4 mb-6">
+            {cartItems.map((item) => (
+              <div key={item.productId} className="flex items-center justify-between border-b pb-4">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={item.image_url || 'https://via.placeholder.com/100'}
+                    alt={item.productdisplayname}
+                    className="w-20 h-20 rounded-md object-cover"
+                  />
+                  <div>
+                    <h4 className="font-semibold">{item.productdisplayname}</h4>
+                    <p className="text-gray-500 text-sm">Size: {item.size}</p>
+                    <p className="text-gray-500 text-sm">₹{item.price} each</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <button
+                    className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
+                    onClick={() => handleQuantityChange(item.productId, -1)}
+                  >
+                    -
+                  </button>
+                  <span className="w-8 text-center">{item.quantity}</span>
+                  <button
+                    className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
+                    onClick={() => handleQuantityChange(item.productId, 1)}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <p className="font-medium text-right">₹{(item.price * item.quantity).toFixed(2)}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Price Summary */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-lg">
+              <span className="text-gray-600">Subtotal ({cartItems.length} items)</span>
+              <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-lg">
+              <span className="text-gray-600">Discount</span>
+              <span className="font-semibold text-green-600">-₹{discount}</span>
+            </div>
+            <div className="flex justify-between text-lg">
+              <span className="text-gray-600">Delivery Charges</span>
+              <span className="font-semibold">
+                {deliveryCharges === 0 ? (
+                  <span className="text-green-600">FREE</span>
+                ) : (
+                  `₹${deliveryCharges}`
+                )}
+              </span>
+            </div>
+            <div className="flex justify-between text-xl font-bold mt-4 pt-4 border-t">
+              <span>Total</span>
+              <span>₹{finalTotal.toFixed(2)}</span>
+            </div>
+            {discount > 0 && (
+              <p className="text-green-600 text-sm">You will save ₹{discount} on this order</p>
+            )}
+          </div>
+
+          <button
+            onClick={() => navigate('/cart')}
+            className="mt-6 inline-block text-blue-600 hover:underline"
+          >
+            ← Back to Cart
+          </button>
+        </div>
+
+        {/* Payment Info */}
+        <div className="bg-gray-200 p-6 rounded-lg">
+          <h2 className="text-2xl font-bold mb-6">Payment Info</h2>
+
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <label className="block text-black mb-1">Payment Method</label>
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="method" defaultChecked /> Credit Card
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="method" /> PayPal
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-black mb-1">Name on Card</label>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="John Carter"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-black mb-1">Card Number</label>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="1234 5678 9012 3456"
+                required
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-black mb-1">Expiration Date</label>
+                <input
+                  type="text"
+                  className="w-full border rounded px-3 py-2"
+                  placeholder="MM/YY"
+                  required
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-black mb-1">CVV</label>
+                <input
+                  type="text"
+                  className="w-full border rounded px-3 py-2"
+                  placeholder="123"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-lg mb-4">
+              <h3 className="font-semibold mb-2">Delivery Address:</h3>
+              <p className="text-gray-700 text-sm">123 Main Street, Indore - 452020</p>
+              <button type="button" className="text-blue-600 hover:underline text-sm mt-1">
+                Change Address
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              Place Order - ₹{finalTotal.toFixed(2)}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}

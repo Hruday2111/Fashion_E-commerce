@@ -223,7 +223,7 @@ const Home = () => {
                 {products.map((item, index) => (
                     <div
                         key={item.productId || `product-${index}`}
-                        className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                        className="min-w-[200px] max-w-[215px] cursor-pointer rounded-lg p-4 shadow-sm hover:shadow-md"
                         onClick={() => handleProductClick(item.productId)}
                         style={{ cursor: 'pointer' }}
                     >
