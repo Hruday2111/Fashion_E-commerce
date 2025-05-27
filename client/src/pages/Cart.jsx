@@ -92,45 +92,14 @@ const Cart = () => {
         }
     };
 
-    const handleCheckout = () => {
-        navigate('/checkout');
+    const handlePlaceOrder = () => {
+        navigate('/checkout_cart');
     };
 
     const handleContinueShopping = () => {
         navigate('/');
     };
 
-    const handleAddToCart = async (productId) => {
-        try {
-            const response = await fetch(`http://localhost:4000/api/cart/add?productId=${productId}`, {
-                method: 'POST',
-                credentials: 'include'
-            });
-            
-            if (!response.ok) {
-                throw new Error("Failed to add item to cart");
-            }
-            
-            // Refresh cart items
-            const refreshResponse = await fetch('http://localhost:4000/api/cart/', {
-                credentials: 'include'
-            });
-            
-            if (refreshResponse.ok) {
-                const data = await refreshResponse.json();
-                if (Array.isArray(data)) {
-                    const itemsWithQuantity = data.map(item => ({
-                        ...item,
-                        quantity: 1
-                    }));
-                    setCartItems(itemsWithQuantity);
-                    calculateTotal(itemsWithQuantity);
-                }
-            }
-        } catch (err) {
-            setError(err.message);
-        }
-    };
 
     if (loading) return <p className="text-center text-gray-500 text-lg">Loading your cart...</p>;
     if (error) return <p className="text-center text-red-500 text-lg">Error: {error}</p>;
@@ -240,7 +209,7 @@ const Cart = () => {
             <div className="flex gap-4">
                 <button 
                     className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition shadow-md flex-1"
-                    onClick={handleCheckout}
+                    onClick={handlePlaceOrder}
                 >
                     {isDirectCheckout ? 'Proceed to Payment' : 'Place Order'}
                 </button>

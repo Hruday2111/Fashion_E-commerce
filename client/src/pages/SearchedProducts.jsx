@@ -47,7 +47,7 @@ const SearchedProducts = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map((product) => (
-                    <div key={product.id} className="p-4 border rounded-lg shadow-lg" onClick={() => handleProductClick(product.id)}
+                    <div key={product.productId} className="p-4 border rounded-lg shadow-lg" onClick={() => handleProductClick(product.productId)}
                         style={{ cursor: 'pointer' }}>
                         <img src={product.image_url} alt={product.productdisplayname} className="w-full h-40 object-cover rounded-md" />
                         <h3 className="text-lg font-semibold mt-2">{product.productdisplayname}</h3>
