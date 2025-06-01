@@ -45,6 +45,7 @@ export default function BuyNow() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle checkout logic here
+    
     alert('Order placed successfully!');
     navigate('/');
   };
@@ -137,7 +138,7 @@ export default function BuyNow() {
         <div className="bg-gray-200 p-6 rounded-lg">
           <h2 className="text-2xl font-bold mb-6">Payment Info.</h2>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4">
             <div>
               <label className="block text-black mb-1">Payment Method</label>
               <div className="flex items-center gap-4">
@@ -192,6 +193,8 @@ export default function BuyNow() {
             </div>
 
             <button
+              onClick={handleSubmit}
+              disabled={loading}
               type="submit"
               className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
             >

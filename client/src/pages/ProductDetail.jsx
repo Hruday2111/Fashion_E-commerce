@@ -191,7 +191,15 @@ const ProductDetails = () => {
 
                 console.log("Fetched Product:", data1);
                 // Fetch similar products based on the article type
-                const response2 = await fetch(`http://localhost:4000/api/product/filteredProducts?query=${encodeURIComponent(data1.articletype)}&count=${10}`);
+                // Combine article type and gender as separate query parameters for req.query backend
+                const queryParams = new URLSearchParams({
+                    query: `${data1.articletype} ${data1.gender}`,
+                    count: 10
+                }).toString();
+                
+                const response2 = await fetch(
+                    `http://localhost:4000/api/product/filteredProducts?${queryParams}`
+                );
                 if (!response2.ok) throw new Error("Failed to fetch product");
                 const data2 = await response2.json();
                 setsimilar(data2);

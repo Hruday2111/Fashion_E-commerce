@@ -237,7 +237,7 @@ const Home = () => {
                         <div className="p-4">
                             <h4 className="text-gray-900 font-medium line-clamp-2 h-12">{item.productdisplayname}</h4>
                             <div className="flex justify-between items-center mt-2">
-                                <p className="text-lg font-bold text-blue-600">${item.price}</p>
+                                <p className="text-lg font-bold text-blue-600">₹{item.price}</p>
                                 <button className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
