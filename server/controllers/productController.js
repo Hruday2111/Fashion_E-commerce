@@ -56,33 +56,53 @@ const searchproducts = async (req, res) => {
 
         // Full-Text Search with Cleaned Query
         const cleanedQuery = words.join(" ");
-        let mongoResults = await productModel.find({
+        let wordResults = [];
+
+        // For each word, get matching products
+        for (const word of words) {
+            const results = await productModel.find({
             $and: [
-                { $text: { $search: cleanedQuery } },
+                { $text: { $search: word } },
                 ...searchConditions
             ]
-        }).limit(parseInt(count));
+            }).select('_id'); // Only fetch _id for intersection
+            wordResults.push(results.map(r => r._id.toString()));
+        }
 
-        // If no results from full-text search, try regex-based fuzzy matching
-        if (mongoResults.length === 0) {
-            let regexQuery = {
-                $or: [
-                    { productDisplayName: { $regex: cleanedQuery, $options: "i" } },
-                    { masterCategory: { $regex: cleanedQuery, $options: "i" } },
-                    { subCategory: { $regex: cleanedQuery, $options: "i" } },
-                    { baseColor: { $regex: cleanedQuery, $options: "i" } }
-                ]
-            };
+        // Find intersection of all result sets
+        let intersectedIds = wordResults.length > 0
+            ? wordResults.reduce((a, b) => a.filter(id => b.includes(id)))
+            : [];
 
+        // Fetch full product documents for intersected ids
+        let mongoResults = [];
+        if (intersectedIds.length > 0) {
             mongoResults = await productModel.find({
-                $and: [regexQuery, ...searchConditions]
+            _id: { $in: intersectedIds }
             }).limit(parseInt(count));
         }
+
+        // // If no results from full-text search, try regex-based fuzzy matching
+        // if (mongoResults.length === 0) {
+        //     let regexQuery = {
+        //         $or: [
+        //             { productDisplayName: { $regex: cleanedQuery, $options: "i" } },
+        //             { masterCategory: { $regex: cleanedQuery, $options: "i" } },
+        //             { subCategory: { $regex: cleanedQuery, $options: "i" } },
+        //             { baseColor: { $regex: cleanedQuery, $options: "i" } }
+        //         ]
+        //     };
+
+        //     mongoResults = await productModel.find({
+        //         $and: [regexQuery, ...searchConditions]
+        //     }).limit(parseInt(count));
+        // }
 
         return res.status(200).json(mongoResults);
     } catch (error) {
         return res.status(500).json({ error: "Something went wrong", details: error.message });
     }
+
 };
 
 
