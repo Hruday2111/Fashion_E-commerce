@@ -35,4 +35,22 @@ const createOrder = async (req, res) => {
     }
 };
 
-module.exports = createOrder;
+const getAllOrdersByUserId = async (req, res) => {
+    try {
+        const userId = req.userId;
+
+        const orders = await Order.find({ userId }).sort({ orderDate: -1 });
+
+        if (orders.length === 0) {
+            return res.status(200).json({ message: 'No previous orders placed', orders: [] });
+        }
+
+        res.status(200).json({ message: 'Orders fetched successfully', orders });
+    } 
+    catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
+module.exports = {createOrder,getAllOrdersByUserId};

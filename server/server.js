@@ -8,7 +8,8 @@ const app = express();
 
 const profileRoutes = require('./routes/profileRoutes')
 const productRoutes = require('./routes/productRoutes')
-const cartRoutes = require('./routes/cartRoutes');
+const cartRoutes = require('./routes/cartRoutes')
+const ordersRoutes = require('./routes/ordersRoutes')
 const { jwtAuthMiddleware } = require("./middleware/jwtmiddleware");
 
 app.use(
@@ -27,6 +28,8 @@ app.use(express.json());
 app.use('/api/profile/',profileRoutes)
 
 app.use('/api/cart/', jwtAuthMiddleware,cartRoutes)
+
+app.use('/api/orders/',jwtAuthMiddleware,ordersRoutes)
 
 app.use('/api/product/', productRoutes)
 
