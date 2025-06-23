@@ -1,4 +1,3 @@
-
 // import { useParams } from 'react-router-dom';
 // import { useEffect, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -214,6 +213,23 @@ export default function Checkout() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    paymentMethod: 'Credit Card',
+    cardName: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    fullName: '',
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'India',
+    phone: ''
+  });
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -273,11 +289,96 @@ export default function Checkout() {
     calculateTotal(updatedItems);
   };
 
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle checkout logic here
-    alert('Order placed successfully!');
-    navigate('/');
+    
+    // Validate required fields
+    const requiredFields = ['fullName', 'street', 'city', 'state', 'zipCode', 'phone', 'cardName', 'cardNumber', 'expiryDate', 'cvv'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    
+    if (missingFields.length > 0) {
+      alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const discount = Math.round(subtotal * 0.1);
+      const deliveryCharges = subtotal > 1000 ? 0 : 40;
+      const finalTotal = subtotal - discount + deliveryCharges;
+
+      // Prepare order items
+      const orderItems = cartItems.map(item => ({
+        productId: item.productId,
+        productName: item.productdisplayname,
+        price: item.price,
+        quantity: item.quantity,
+        size: item.size || 'Standard',
+        image_url: item.image_url
+      }));
+
+      // Prepare shipping address
+      const shippingAddress = {
+        fullName: formData.fullName,
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        country: formData.country,
+        phone: formData.phone
+      };
+
+      const orderData = {
+        paymentMethod: formData.paymentMethod,
+        shippingAddress,
+        items: orderItems,
+        totalAmount: finalTotal,
+        subtotal,
+        discount,
+        deliveryCharges
+      };
+
+      console.log('Sending order data:', orderData);
+
+      const response = await fetch('http://localhost:4000/api/orders/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(orderData)
+      });
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Server error response:', errorData);
+        throw new Error(errorData.message || errorData.error || 'Failed to create order');
+      }
+
+      const result = await response.json();
+      console.log('Order created successfully:', result);
+      
+      alert(`Order placed successfully! Order ID: ${result.orderId}`);
+      navigate('/orders');
+      
+    } catch (err) {
+      console.error('Order creation error:', err);
+      alert(`Failed to place order: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) return <div className="text-center mt-10">Loading cart items...</div>;
@@ -386,27 +487,46 @@ export default function Checkout() {
           </button>
         </div>
 
-        {/* Payment Info */}
+        {/* Payment & Shipping Form */}
         <div className="bg-gray-200 p-6 rounded-lg">
-          <h2 className="text-2xl font-bold mb-6">Payment Info</h2>
+          <h2 className="text-2xl font-bold mb-6">Payment & Shipping</h2>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Payment Method */}
             <div>
-              <label className="block text-black mb-1">Payment Method</label>
+              <label className="block text-black mb-1">Payment Method *</label>
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2">
-                  <input type="radio" name="method" defaultChecked /> Credit Card
+                  <input 
+                    type="radio" 
+                    name="paymentMethod" 
+                    value="Credit Card"
+                    checked={formData.paymentMethod === 'Credit Card'}
+                    onChange={handleInputChange}
+                  /> 
+                  Credit Card
                 </label>
                 <label className="flex items-center gap-2">
-                  <input type="radio" name="method" /> PayPal
+                  <input 
+                    type="radio" 
+                    name="paymentMethod" 
+                    value="Debit Card"
+                    checked={formData.paymentMethod === 'Debit Card'}
+                    onChange={handleInputChange}
+                  /> 
+                  Debit Card
                 </label>
               </div>
             </div>
 
+            {/* Card Details */}
             <div>
-              <label className="block text-black mb-1">Name on Card</label>
+              <label className="block text-black mb-1">Name on Card *</label>
               <input
                 type="text"
+                name="cardName"
+                value={formData.cardName}
+                onChange={handleInputChange}
                 className="w-full border rounded px-3 py-2"
                 placeholder="John Carter"
                 required
@@ -414,9 +534,12 @@ export default function Checkout() {
             </div>
 
             <div>
-              <label className="block text-black mb-1">Card Number</label>
+              <label className="block text-black mb-1">Card Number *</label>
               <input
                 type="text"
+                name="cardNumber"
+                value={formData.cardNumber}
+                onChange={handleInputChange}
                 className="w-full border rounded px-3 py-2"
                 placeholder="1234 5678 9012 3456"
                 required
@@ -425,18 +548,24 @@ export default function Checkout() {
 
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-black mb-1">Expiration Date</label>
+                <label className="block text-black mb-1">Expiration Date *</label>
                 <input
                   type="text"
+                  name="expiryDate"
+                  value={formData.expiryDate}
+                  onChange={handleInputChange}
                   className="w-full border rounded px-3 py-2"
                   placeholder="MM/YY"
                   required
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-black mb-1">CVV</label>
+                <label className="block text-black mb-1">CVV *</label>
                 <input
                   type="text"
+                  name="cvv"
+                  value={formData.cvv}
+                  onChange={handleInputChange}
                   className="w-full border rounded px-3 py-2"
                   placeholder="123"
                   required
@@ -444,19 +573,99 @@ export default function Checkout() {
               </div>
             </div>
 
+            {/* Shipping Address */}
             <div className="bg-white p-4 rounded-lg mb-4">
-              <h3 className="font-semibold mb-2">Delivery Address:</h3>
-              <p className="text-gray-700 text-sm">123 Main Street, Indore - 452020</p>
-              <button type="button" className="text-blue-600 hover:underline text-sm mt-1">
-                Change Address
-              </button>
+              <h3 className="font-semibold mb-2">Shipping Address:</h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-black mb-1">Full Name *</label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    className="w-full border rounded px-3 py-2"
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-black mb-1">Street Address *</label>
+                  <input
+                    type="text"
+                    name="street"
+                    value={formData.street}
+                    onChange={handleInputChange}
+                    className="w-full border rounded px-3 py-2"
+                    placeholder="123 Main Street"
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="block text-black mb-1">City *</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className="w-full border rounded px-3 py-2"
+                      placeholder="Indore"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-black mb-1">State *</label>
+                    <input
+                      type="text"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      className="w-full border rounded px-3 py-2"
+                      placeholder="Madhya Pradesh"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="block text-black mb-1">ZIP Code *</label>
+                    <input
+                      type="text"
+                      name="zipCode"
+                      value={formData.zipCode}
+                      onChange={handleInputChange}
+                      className="w-full border rounded px-3 py-2"
+                      placeholder="452020"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-black mb-1">Phone *</label>
+                    <input
+                      type="text"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-full border rounded px-3 py-2"
+                      placeholder="9876543210"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              disabled={isSubmitting}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              Place Order - ₹{finalTotal.toFixed(2)}
+              {isSubmitting ? 'Placing Order...' : `Place Order - ₹${finalTotal.toFixed(2)}`}
             </button>
           </form>
         </div>

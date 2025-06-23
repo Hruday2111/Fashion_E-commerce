@@ -9,14 +9,15 @@ import Login from "./pages/Login";
 import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import BuyNow from './pages/BuyNow';
+import Orders from './pages/Orders';
 
-import { AuthProvider, useAuth } from './context/AuthContext'; // ✅ useAuth imported here
+import { AuthProvider, useAuth } from './context/AuthContext'; // useAuth imported here
 
 
 // AppContent is separated so it can use useLocation (inside <Router>)
 function AppContent() {
   const location = useLocation();
-  const { loading } = useAuth(); // ✅ Access context values correctly
+  const { loading } = useAuth(); // Access context values correctly
 
   if (loading) {
     return <div>Loading...</div>; // Or your custom spinner
@@ -38,6 +39,7 @@ function AppContent() {
         <Route path="/search" element={<SearchedProducts />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/orders" element={<Orders />} />
       </Routes>
     </>
   );

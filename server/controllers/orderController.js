@@ -1,37 +1,71 @@
 const Order = require('../models/orderModel');
-const userint=require('../models/userinteractionModel')
+const Cart = require('../models/cartModel');
 
 const createOrder = async (req, res) => {
     try {
-        const userId = req.userId
-        const { productId, paymentMethod, shippingAddress } = req.body;
+        const userId = req.userId;
+        const { paymentMethod, shippingAddress, items, totalAmount, subtotal, discount, deliveryCharges } = req.body;
 
-        if (!userId || !productId || !paymentMethod || !shippingAddress) {
+        console.log('Creating order with data:', {
+            userId,
+            paymentMethod,
+            itemsCount: items?.length,
+            totalAmount,
+            subtotal,
+            discount,
+            deliveryCharges
+        });
+
+        if (!userId || !paymentMethod || !shippingAddress || !items || items.length === 0) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
 
-        const existingOrder = await Order.findOne({ productId });
-        if (existingOrder) {
-            return res.status(400).json({ message: 'Order ID already exists. Please use a unique order ID.' });
-        }
         // Create a new order
         const order = new Order({
             userId,
-            productId,
+            items,
+            totalAmount,
+            subtotal,
+            discount,
+            deliveryCharges,
             paymentMethod,
             shippingAddress,
-            paymentStatus: 'Pending',  
-            orderStatus: 'Processing'  
+            paymentStatus: 'Pending',
+            orderStatus: 'Processing'
         });
 
-        // Save order to database
-        await order.save();
+        console.log('Order object created:', order);
 
-        const userInteraction = await userint.findOne({ userId });
+        // Save order to database
+        const savedOrder = await order.save();
+        console.log('Order saved successfully:', savedOrder._id);
+
+        // Clear the user's cart after successful order creation
+        try {
+            await Cart.findOneAndUpdate(
+                { userId },
+                { productIds: [] },
+                { new: true }
+            );
+            console.log('Cart cleared for user:', userId);
+        } catch (cartError) {
+            console.error('Error clearing cart:', cartError);
+            // Don't fail the order if cart clearing fails
+        }
         
-        res.status(201).json({ message: 'Order placed successfully', order });
+        res.status(201).json({ 
+            message: 'Order placed successfully', 
+            order: savedOrder,
+            orderId: savedOrder.orderId
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Order creation error:', error);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            message: 'Server error', 
+            error: error.message,
+            details: error.stack
+        });
     }
 };
 
@@ -39,7 +73,7 @@ const getAllOrdersByUserId = async (req, res) => {
     try {
         const userId = req.userId;
 
-        const orders = await Order.find({ userId }).sort({ orderDate: -1 });
+        const orders = await Order.find({ userId }).sort({ createdAt: -1 });
 
         if (orders.length === 0) {
             return res.status(200).json({ message: 'No previous orders placed', orders: [] });
@@ -48,9 +82,9 @@ const getAllOrdersByUserId = async (req, res) => {
         res.status(200).json({ message: 'Orders fetched successfully', orders });
     } 
     catch (error) {
+        console.error('Error fetching orders:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
-
-module.exports = {createOrder,getAllOrdersByUserId};
+module.exports = { createOrder, getAllOrdersByUserId };
