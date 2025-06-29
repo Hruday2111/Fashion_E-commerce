@@ -121,6 +121,7 @@ const Navbar = () => {
                 Home
               </Link>
             </li>
+            {/*
             <li>
               <Link
                 to="/categories"
@@ -137,6 +138,7 @@ const Navbar = () => {
                 Offers
               </Link>
             </li>
+            */}
           </ul>
         </div>
       </div>
