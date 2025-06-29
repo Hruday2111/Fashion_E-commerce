@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {
     singleproduct,
-    searchproducts
+    searchproducts,
+    feedback
 } = require('../controllers/productController')
 
 // get the particular product for product page
@@ -13,5 +14,7 @@ router.get('/search', searchproducts)
 
 // get products for home and filtered products
 router.get('/filteredProducts',searchproducts)
+
+router.patch('/review',feedback)
 
 module.exports = router

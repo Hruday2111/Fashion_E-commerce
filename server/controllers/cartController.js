@@ -49,53 +49,6 @@ const deleteproduct = async (req, res) => {
     }
 };
 
-// Old
-// const addtocart = async (req, res) => {
-//     const userId = req.userId
-//     const { productId } = req.query;
-//     console.log(userId)
-
-//     if (!productId) {
-//         return res.status(400).json({ error: 'Product ID is required' });
-//     }
-
-//     const cart = await cartModel.findOne({userId})
-
-//     if(!cart){
-//         const newproduct = await product.findOne({ productId: productId });
-//         try {
-//             if(!newproduct){
-//                 return res.status(400).json({ error: 'No such product available' });
-//             }
-//             else{
-//                 const cart = await cartModel.create({userId : userId},{productId:productId})
-//                 res.status(200).json({ message: 'Product added to cart' });
-//             }
-//         } 
-        
-//         catch (error) {
-//             res.status(500).json({ error: 'Something went wrong', details: error.message });
-//         }
-//     }
-
-//     else{
-//         const newproduct = await product.findOne({ productId: productId });
-//         try {
-//             if(!newproduct){
-//                 return res.status(400).json({ error: 'No such product available' });
-//             }
-//             else{
-//                 cart.productIds = [...cart.productIds, productId]
-//                 cart.save()
-//                 res.status(200).json({ message: 'Product added to cart' });
-//             }
-//         } 
-//         catch (error) {
-//             res.status(500).json({ error: 'Something went wrong', details: error.message });
-//         }
-//     }
-// };
-
 // To add a product into a usre's cart  
 const addtocart = async (req, res) => {
     const userId = req.userId
