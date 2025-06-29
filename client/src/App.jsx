@@ -6,13 +6,14 @@ import SearchedProducts from './pages/SearchedProducts';
 // import OrderSummary from './pages/OrderSummary';
 import Checkout from './pages/Checkout';
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import BuyNow from './pages/BuyNow';
 import Orders from './pages/Orders';
 
 import { AuthProvider, useAuth } from './context/AuthContext'; // useAuth imported here
-
+import { GoogleAuthProvider } from './context/GoogleAuthContext'; // Import GoogleAuthProvider
 
 // AppContent is separated so it can use useLocation (inside <Router>)
 function AppContent() {
@@ -23,7 +24,7 @@ function AppContent() {
     return <div>Loading...</div>; // Or your custom spinner
   }
 
-  const hideNavbarPaths = ['/login']; // Add more paths if you want to hide the navbar
+  const hideNavbarPaths = ['/login', '/signup']; // Add more paths if you want to hide the navbar
   const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
 
   return (
@@ -31,6 +32,7 @@ function AppContent() {
       {shouldShowNavbar && <Navbar />}
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         {/* <Route path="/ordersummary/:id" element={<OrderSummary />} /> */}
@@ -50,7 +52,9 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <AppContent />
+        <GoogleAuthProvider>
+          <AppContent />
+        </GoogleAuthProvider>
       </Router>
     </AuthProvider>
   );

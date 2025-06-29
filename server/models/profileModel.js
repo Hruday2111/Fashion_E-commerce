@@ -8,11 +8,15 @@ const userProfileSchema = new mongoose.Schema(
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     dateOfBirth: { type: Date },
-    gender: { type: String, enum: ['male', 'female', 'other'], default: 'Other' },
+    gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
     Address: { type: String, default: '' },
     phoneNumber: { type: String, default: '' },
     joinedAt: { type: Date, default: Date.now },
-    userId: { type: String }
+    userId: { type: String },
+    // Google OAuth fields
+    googleId: { type: String, sparse: true },
+    profilePicture: { type: String, default: '' },
+    isGoogleUser: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

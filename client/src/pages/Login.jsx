@@ -75,6 +75,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { useAuth } from "../context/AuthContext"; // Import it
+import GoogleSignIn from "../components/GoogleSignIn"; // Import GoogleSignIn component
 
 export default function LoginPage() {
   const { setIsLoggedIn } = useAuth(); // Get the setter
@@ -111,57 +112,6 @@ export default function LoginPage() {
     }
     setLoading(false);
   };
-
-  //   return (
-  //     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-500 to-purple-200 p-6">
-  //       <Card className="w-96 bg-white/30 backdrop-blur-lg shadow-xl rounded-lg border border-white/40">
-  //         <CardHeader>
-  //           <CardTitle className="text-center text-2xl font-semibold text-gray-800">Login</CardTitle>
-  //         </CardHeader>
-  //         <CardContent>
-  //           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-  //             {/* Email Input */}
-  //             <div>
-  //               <Input
-  //                 type="email"
-  //                 placeholder="Email"
-  //                 className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
-  //                 {...register("email", { required: "Email is required" })}
-  //               />
-  //               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-  //             </div>
-
-  //             {/* Password Input */}
-  //             <div>
-  //               <Input
-  //                 type="password"
-  //                 placeholder="Password"
-  //                 className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
-  //                 {...register("password", { required: "Password is required" })}
-  //               />
-  //               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-  //             </div>
-
-  //             {/* Login Button */}
-  //             <Button 
-  //               type="submit" 
-  //               className="w-full bg-blue-600 text-white font-medium py-2 rounded-md shadow-md hover:bg-blue-700 transition duration-200 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed"
-  //               disabled={loading}
-  //             >
-  //               {loading ? "Logging in..." : "Login"}
-  //             </Button>
-
-  //             {/* Forgot Password & Signup */}
-  //             <div className="text-center text-sm text-gray-600 mt-2">
-  //               <a href="/forgot-password" className="hover:underline text-blue-700">Forgot Password?</a> |  
-  //               <a href="/signup" className="hover:underline text-blue-700 ml-1">Sign Up</a>
-  //             </div>
-  //           </form>
-  //         </CardContent>
-  //       </Card>
-  //     </div>
-  //   );
-  // }  
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-[#8b5a41] to-[#8b5a41] items-center justify-center overflow-hidden">
@@ -208,20 +158,16 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="my-4 space-y-3">
-            <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2 text-sm hover:bg-gray-100 transition">
-              <img src="/google-icon.svg" alt="Google" className="w-5 h-5 mr-2" />
-              Sign in with Google
-            </button>
-            {/* <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2 text-sm hover:bg-gray-100 transition">
-            <img src="/facebook-icon.svg" alt="Facebook" className="w-5 h-5 mr-2" />
-            Sign up with Facebook
-          </button> */}
-          </div>
+          <GoogleSignIn text="Sign in with Google" />
 
-          <p className="text-sm text-gray-600 mt-4 text-center">
-            <a href="/login" className="font-medium underline">Sign Up</a>
-          </p>
+          <div className="text-center mt-6">
+            <p className="text-sm text-gray-600">
+              Don't have an account? 
+              <a href="/signup" className="font-semibold text-[#8b4b2d] hover:text-[#7a3e22] ml-1 transition-colors">
+                Sign up here
+              </a>
+            </p>
+          </div>
         </div>
 
         {/* Right Image Section */}
