@@ -82,33 +82,57 @@ const searchproducts = async (req, res) => {
             }).limit(parseInt(count));
         }
 
-        // // If no results from full-text search, try regex-based fuzzy matching
-        // if (mongoResults.length === 0) {
-        //     let regexQuery = {
-        //         $or: [
-        //             { productDisplayName: { $regex: cleanedQuery, $options: "i" } },
-        //             { masterCategory: { $regex: cleanedQuery, $options: "i" } },
-        //             { subCategory: { $regex: cleanedQuery, $options: "i" } },
-        //             { baseColor: { $regex: cleanedQuery, $options: "i" } }
-        //         ]
-        //     };
-
-        //     mongoResults = await productModel.find({
-        //         $and: [regexQuery, ...searchConditions]
-        //     }).limit(parseInt(count));
-        // }
-
         return res.status(200).json(mongoResults);
     } catch (error) {
         return res.status(500).json({ error: "Something went wrong", details: error.message });
     }
+}
+        const feedback = async (req, res) => {
+        const { rating, comment, user } = req.body;
+        const { query } = req.query;
+        
+        try {
+            // Validate input
+            if (!rating || !comment || !user) {
+                return res.status(400).json({ message: "Rating, comment, and user are required" });
+            }
 
-};
+            const updatedProduct = await productModel.findOneAndUpdate(
+                { productId: query },
+                {
+                    $push: { 
+                        reviews: { 
+                            user, 
+                            comment, 
+                            rating: Number(rating),
+                            createdAt: new Date() // optional: add timestamp
+                        } 
+                    },
+                    $inc: { [`ratings.${rating}`]: 1 }
+                },
+                { 
+                    new: true, // return updated document
+                    runValidators: false // skip validation
+                }
+            );
 
+            if (!updatedProduct) {
+                return res.status(404).json({ message: "Product not found" });
+            }
 
+            res.json({ 
+                message: "Review added successfully",
+                reviewCount: updatedProduct.reviews.length
+            });
+        } catch (err) {
+            console.error("Review patch error:", err);
+            res.status(500).json({ message: "Internal server error", error: err.message });
+        }
+    };
 
 module.exports = {
     singleproduct,
-    searchproducts
+    searchproducts,
+    feedback
 }
 // post to cart
