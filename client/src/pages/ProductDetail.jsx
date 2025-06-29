@@ -1,163 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import { useNavigate } from "react-router-dom"; // Import useNavigate
-// import { useAuth } from "../context/AuthContext";
-
-// const ProductDetails = () => {
-//     const { isLoggedIn } = useAuth();
-//     const { id } = useParams();
-//     console.log(" verify in id detail",id)
-//     const [product, setProduct] = useState(null);
-//     const [loading, setLoading] = useState(true);
-//     const [error, setError] = useState(null);
-//     const navigate = useNavigate();
-
-//     useEffect(() => {
-//         const fetchProduct = async () => {
-//             try {
-//                 const response = await fetch(`http://localhost:4000/api/product/getProductById?query=${id}`);
-//                 if (!response.ok) throw new Error("Failed to fetch product");
-
-//                 const data = await response.json();
-//                 setProduct(data);
-//             } catch (err) {
-//                 setError(err.message);
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
-
-//         fetchProduct();
-//     }, [id]);
-
-//     const handleCartClickWrapper = () => {
-//         if (isLoggedIn) {
-//             handleCartClick();
-//         } else {
-//             alert('Please log in to add items to your cart.');
-//             navigate('/login');
-//         }
-//     };
-//     const handleBuyNowClickWrapper = () => {
-//         if (isLoggedIn) {
-//             handleBuyNowClick();
-//         } else {
-//             alert('Please log in to proceed further.');
-//             navigate('/login');
-//         }
-//     };
-
-//     const handleCartClick = async () => {
-//         try {
-//             // Send POST request to add item to cart
-//             const response = await fetch(`http://localhost:4000/api/cart/add/?productId=${id}`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 credentials: 'include' // Important for sending cookies/auth tokens
-//             });
-//             console.log(response);
-//             if (!response.ok) {
-//                 throw new Error('Failed to add item to cart');
-//             }
-
-//             // Optional: Show success message
-//             alert('Item added to cart successfully!');
-
-//             // Navigate to cart page
-//             navigate('/cart');
-//         } catch (error) {
-//             console.error('Error adding item to cart:', error);
-//             // alert('Failed to add item to cart. Please try again.');
-//         }
-//     };
-
-//     const handleBuyNowClick = async () => {
-//         navigate(`/checkout/${id}`);
-//     }
-
-//     if (loading) return <p className="text-center text-gray-500 text-lg">Loading...</p>;
-//     if (error) return <p className="text-center text-red-500 text-lg">Error: {error}</p>;
-
-//     return (
-//         <div className="max-w-5xl mx-auto p-6 bg-gray-50 shadow-lg rounded-lg mt-6">
-//             {/* Image + Product Info (Side by Side) */}
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//                 {/* Left - Product Image */}
-//                 <div>
-//                     <img
-//                         src={product.image_url}
-//                         alt={product.productdisplayname}
-//                         className="w-full h-auto rounded-lg shadow-md"
-//                     />
-//                 </div>
-
-//                 {/* Right - Product Info */}
-//                 <div className="flex flex-col justify-center">
-//                     <h2 className="text-3xl font-bold text-gray-800">{product.productdisplayname}</h2>
-//                     <p className="text-xl font-semibold text-green-600 mt-2">Price: ₹{product.price}</p>
-
-//                     {/* Buttons */}
-//                     <div className="flex gap-4 mt-4">
-//                         <button
-//                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-//                             onClick={() => handleCartClickWrapper()}
-//                             style={{ cursor: 'pointer' }}>
-//                             Add to Cart
-//                         </button>
-//                         <button
-//                             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-//                             onClick={() => handleBuyNowClickWrapper()}
-//                             style={{ cursor: 'pointer' }}>
-//                             Buy Now
-//                         </button>
-//                     </div>
-
-//                     {/* Sizes & Offers Section */}
-//                     <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
-//                         <h3 className="text-lg font-semibold">Sizes:</h3>
-//                         <div className="flex gap-2 mt-2">
-//                             {["S", "M", "L", "XL"].map((size) => (
-//                                 <span key={size} className="border px-3 py-1 rounded-md shadow-sm cursor-pointer hover:bg-gray-100">{size}</span>
-//                             ))}
-//                         </div>
-
-//                         <h3 className="text-lg font-semibold mt-4">Offers:</h3>
-//                         <p className="text-sm text-gray-700">Flat 10% off on first order!</p>
-//                     </div>
-//                 </div>
-//             </div>
-
-//             {/* Product Details Section */}
-//             <div className="mt-6 p-6 rounded-lg shadow-md bg-white">
-//                 <h3 className="text-2xl font-bold">Product Details</h3>
-//                 <p className="text-gray-700"><b>Category:</b> {product.mastercategory} - {product.subcategory}</p>
-//                 <p className="text-gray-700"><b>Type:</b> {product.articletype}</p>
-//                 <p className="text-gray-700"><b>Color:</b> {product.basecolour}</p>
-//                 <p className="text-gray-700"><b>Gender:</b> {product.gender}</p>
-//                 <p className="text-gray-700"><b>Usage:</b> {product.usage}</p>
-//                 <p className="text-gray-700"><b>Season:</b> {product.season}</p>
-//             </div>
-
-//             {/* Delivery Section */}
-//             <div className="mt-6 p-6 rounded-lg shadow-md bg-white">
-//                 <h3 className="text-2xl font-bold">Delivery Information</h3>
-//                 <p className="text-gray-700">Estimated Delivery: 3-5 Business Days</p>
-//                 <p className="text-gray-700">Free Shipping on orders above ₹1000</p>
-//             </div>
-
-//             {/* Related Products Section */}
-//             <div className="mt-6 p-6 rounded-lg shadow-md bg-white">
-//                 <h3 className="text-2xl font-bold">Related Products</h3>
-//                 <p className="text-gray-700">Check out similar items that you might like.</p>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default ProductDetails;
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -171,6 +11,11 @@ const ProductDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    // Review state
+    const [reviewUser, setReviewUser] = useState("");
+    const [reviewRating, setReviewRating] = useState(0);
+    const [reviewComment, setReviewComment] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         // Check if id exists before making API call
@@ -215,6 +60,54 @@ const ProductDetails = () => {
 
         fetchProduct();
     }, [id]);
+
+    // Helper functions for ratings
+    function getTotalRatings(ratings) {
+        return Object.values(ratings || {}).reduce((a, b) => a + b, 0);
+    }
+    function calculateAverage(ratings) {
+        const total = getTotalRatings(ratings);
+        if (total === 0) return 0;
+        return (
+            Object.entries(ratings || {}).reduce(
+                (acc, [star, count]) => acc + Number(star) * count,
+                0
+            ) / total
+        );
+    }
+
+    // Review submit handler
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            const res = await fetch(`http://localhost:4000/api/product/review?query=${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user: reviewUser,
+                    rating: reviewRating,
+                    comment: reviewComment,
+                }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("Review submitted successfully!");
+                setReviewUser("");
+                setReviewRating(0);
+                setReviewComment("");
+                window.location.reload();
+            } else {
+                alert("Error: " + data.message);
+            }
+        } catch (err) {
+            alert("Error submitting review");
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     const handleCartClickWrapper = () => {
         if (isLoggedIn) {
@@ -282,191 +175,220 @@ const ProductDetails = () => {
         );
     }
 
-    if (loading) return <p className="text-center text-gray-500 text-lg">Loading...</p>;
-    if (error) return <p className="text-center text-red-500 text-lg">Error: {error}</p>;
-
-    //     return (
-    //         <div className="max-w-5xl mx-auto p-6 bg-gray-50 shadow-lg rounded-lg mt-6">
-    //             {/* Rest of your component remains the same */}
-    //             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    //                 <div>
-    //                     <img
-    //                         src={product.image_url}
-    //                         alt={product.productdisplayname}
-    //                         className="w-full h-auto rounded-lg shadow-md"
-    //                     />
-    //                 </div>
-
-    //                 <div className="flex flex-col justify-center">
-    //                     <h2 className="text-3xl font-bold text-gray-800">{product.productdisplayname}</h2>
-    //                     <p className="text-xl font-semibold text-green-600 mt-2">Price: ₹{product.price}</p>
-
-    //                     <div className="flex gap-4 mt-4">
-    //                         <button
-    //                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-    //                             onClick={handleCartClickWrapper}
-    //                             style={{ cursor: 'pointer' }}>
-    //                             Add to Cart
-    //                         </button>
-    //                         <button
-    //                             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-    //                             onClick={handleBuyNowClickWrapper}
-    //                             style={{ cursor: 'pointer' }}>
-    //                             Buy Now
-    //                         </button>
-    //                     </div>
-
-    //                     <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
-    //                         <h3 className="text-lg font-semibold">Sizes:</h3>
-    //                         <div className="flex gap-2 mt-2">
-    //                             {["S", "M", "L", "XL"].map((size) => (
-    //                                 <span key={size} className="border px-3 py-1 rounded-md shadow-sm cursor-pointer hover:bg-gray-100">{size}</span>
-    //                             ))}
-    //                         </div>
-
-    //                         <h3 className="text-lg font-semibold mt-4">Offers:</h3>
-    //                         <p className="text-sm text-gray-700">Flat 10% off on first order!</p>
-    //                     </div>
-    //                 </div>
-    //             </div>
-
-    //             <div className="mt-6 p-6 rounded-lg shadow-md bg-white">
-    //                 <h3 className="text-2xl font-bold">Product Details</h3>
-    //                 <p className="text-gray-700"><b>Category:</b> {product.mastercategory} - {product.subcategory}</p>
-    //                 <p className="text-gray-700"><b>Type:</b> {product.articletype}</p>
-    //                 <p className="text-gray-700"><b>Color:</b> {product.basecolour}</p>
-    //                 <p className="text-gray-700"><b>Gender:</b> {product.gender}</p>
-    //                 <p className="text-gray-700"><b>Usage:</b> {product.usage}</p>
-    //                 <p className="text-gray-700"><b>Season:</b> {product.season}</p>
-    //             </div>
-
-    //             <div className="mt-6 p-6 rounded-lg shadow-md bg-white">
-    //                 <h3 className="text-2xl font-bold">Delivery Information</h3>
-    //                 <p className="text-gray-700">Estimated Delivery: 3-5 Business Days</p>
-    //                 <p className="text-gray-700">Free Shipping on orders above ₹1000</p>
-    //             </div>
-
-    //             <div className="mt-6 p-6 rounded-lg shadow-md bg-white">
-    //                 <h3 className="text-2xl font-bold">Related Products</h3>
-    //                 <p className="text-gray-700 mb-4">Check out similar items that you might like.</p>
-    //                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" >
-
-    //                     {similar.map((product, index) => (
-    //                         <div
-    //                             key={index}
-    //                             className="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
-    //                             onClick={() => handleProductClick(product.productId)} 
-    //                             style={{ cursor: 'pointer' }}
-    //                         >
-    //                             <img
-    //                                 src={product.image_url}
-    //                                 alt={product.productdisplayname}
-    //                                 className="w-full h-40 object-cover rounded-md mb-2"
-    //                             />
-    //                             <h4 className="text-lg font-semibold">{product.productdisplayname}</h4>
-    //                             <p className="text-gray-600">${product.price}</p>
-    //                         </div>
-    //                     ))}
-    //                 </div>
-    //             </div>
-
-    //         </div>
-    //     );
-    // };
-
-    // export default ProductDetails;
+    if (loading) return (
+        <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p className="text-gray-600 text-lg font-medium">Loading product details...</p>
+            </div>
+        </div>
+    );
+    if (error) return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-md mx-4">
+                <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                <p className="text-red-500 text-lg mb-4">Error: {error}</p>
+                <button onClick={() => navigate('/')} className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold">← Back to Home</button>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
-            {/* Product Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-xl shadow-md">
-                <img
-                    src={product.image_url}
-                    alt={product.productdisplayname}
-                    className="w-full h-[400px] object-cover rounded-lg shadow"
-                />
-                <div className="flex flex-col justify-between">
-                    <div>
-                        <h2 className="text-4xl font-bold text-gray-800 mb-2">{product.productdisplayname}</h2>
-                        <p className="text-2xl font-semibold text-green-600 mb-4">₹{product.price}</p>
-                        <div className="mb-6">
-                            <h3 className="text-lg font-medium mb-2">Sizes</h3>
-                            <div className="flex gap-3">
-                                {["S", "M", "L", "XL"].map((size) => (
-                                    <span key={size} className="border px-4 py-1 rounded-full text-sm shadow cursor-pointer hover:bg-gray-100">
-                                        {size}
-                                    </span>
-                                ))}
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-10">
+            <div className="max-w-6xl mx-auto px-4">
+                {/* Product Overview */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-8 rounded-3xl shadow-2xl">
+                    <img
+                        src={product.image_url}
+                        alt={product.productdisplayname}
+                        className="w-full h-[400px] object-cover rounded-2xl shadow-lg border border-indigo-100"
+                    />
+                    <div className="flex flex-col justify-between">
+                        <div>
+                            <h2 className="text-4xl font-extrabold text-indigo-700 mb-2">{product.productdisplayname}</h2>
+                            <p className="text-2xl font-bold text-green-600 mb-4">₹{product.price}</p>
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold mb-2 text-gray-700">Sizes</h3>
+                                <div className="flex gap-3">
+                                    {["S", "M", "L", "XL"].map((size) => (
+                                        <span key={size} className="border px-4 py-1 rounded-full text-sm shadow cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            {size}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold mb-1 text-gray-700">Offers</h3>
+                                <p className="text-sm text-indigo-600 font-medium">🎉 Flat 10% off on first order!</p>
                             </div>
                         </div>
-                        <div className="mb-6">
-                            <h3 className="text-lg font-medium mb-1">Offers</h3>
-                            <p className="text-sm text-gray-700">🎉 Flat 10% off on first order!</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                        <button
-                            onClick={handleCartClickWrapper}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition shadow-md"
-                        >
-                            Add to Cart
-                        </button>
-                        <button
-                            onClick={handleBuyNowClickWrapper}
-                            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition shadow-md"
-                        >
-                            Buy Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* Product Details */}
-            <div className="mt-10 bg-white p-6 rounded-xl shadow-md">
-                <h3 className="text-2xl font-bold mb-4 text-gray-800">Product Details</h3>
-                <ul className="text-gray-700 space-y-2 text-sm sm:text-base">
-                    <li><b>Category:</b> {product.mastercategory} - {product.subcategory}</li>
-                    <li><b>Type:</b> {product.articletype}</li>
-                    <li><b>Color:</b> {product.basecolour}</li>
-                    <li><b>Gender:</b> {product.gender}</li>
-                    <li><b>Usage:</b> {product.usage}</li>
-                    <li><b>Season:</b> {product.season}</li>
-                </ul>
-            </div>
-
-            {/* Delivery Info */}
-            <div className="mt-8 bg-white p-6 rounded-xl shadow-md">
-                <h3 className="text-2xl font-bold mb-2 text-gray-800">Delivery Information</h3>
-                <p className="text-gray-700">📦 Estimated Delivery: 3-5 Business Days</p>
-                <p className="text-gray-700">🚚 Free Shipping on orders above ₹1000</p>
-            </div>
-
-            {/* Related Products */}
-            <div className="mt-10 bg-white p-6 rounded-xl shadow-md">
-                <h3 className="text-2xl font-bold mb-2 text-gray-800">Related Products</h3>
-                <p className="text-gray-600 mb-4">Check out similar items that you might like.</p>
-
-                <div className="overflow-x-auto scrollbar-hide">
-                    <div className="flex gap-6 w-max transition-all duration-300 ease-in-out">
-                        {similar.map((product, index) => (
-                            <div
-                                key={index}
-                                onClick={() => handleProductClick(product.productId)}
-                                className="min-w-[200px] max-w-[200px] cursor-pointer rounded-lg p-4 shadow-sm hover:shadow-md transition group"
+                        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                            <button
+                                onClick={handleCartClickWrapper}
+                                className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-xl transition shadow-lg text-lg"
                             >
-                                <img
-                                    src={product.image_url}
-                                    alt={product.productdisplayname}
-                                    className="w-full h-48 object-cover rounded-md mb-3 group-hover:scale-105 transition"
-                                />
-                                <h4 className="text-md font-semibold text-gray-800 truncate">{product.productdisplayname}</h4>
-                                <p className="text-sm text-green-600">₹{product.price}</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                Add to Cart
+                            </button>
+                            <button
+                                onClick={handleBuyNowClickWrapper}
+                                className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-xl transition shadow-lg text-lg"
+                            >
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Product Details */}
+                <div className="mt-10 bg-white p-8 rounded-3xl shadow-xl">
+                    <h3 className="text-2xl font-bold mb-4 text-indigo-700">Product Details</h3>
+                    <ul className="text-gray-700 space-y-2 text-base">
+                        <li><b>Category:</b> {product.mastercategory} - {product.subcategory}</li>
+                        <li><b>Type:</b> {product.articletype}</li>
+                        <li><b>Color:</b> {product.basecolour}</li>
+                        <li><b>Gender:</b> {product.gender}</li>
+                        <li><b>Usage:</b> {product.usage}</li>
+                        <li><b>Season:</b> {product.season}</li>
+                    </ul>
+                </div>
+
+                {/* Customer Reviews Section */}
+                <div className="mt-10 bg-white p-6 rounded-xl shadow-md">
+                    <h3 className="text-2xl font-bold mb-4 text-gray-800">Customer Reviews</h3>
+                    {/* Ratings Summary */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <div className="text-3xl font-bold text-yellow-500 flex items-center gap-2">
+                                <span>★</span> {calculateAverage(product.ratings).toFixed(1)} <span className="text-gray-700 text-lg font-normal">out of 5</span>
                             </div>
-                        ))}
+                            <div className="text-sm text-gray-500 mb-2">
+                                {getTotalRatings(product.ratings)} global ratings
+                            </div>
+                            {/* Star Rating Bars */}
+                            {[5, 4, 3, 2, 1].map((star) => {
+                                const total = getTotalRatings(product.ratings);
+                                const count = product.ratings?.[star] || 0;
+                                const percent = total > 0 ? (count / total) * 100 : 0;
+                                return (
+                                    <div key={star} className="flex items-center gap-2 text-sm mt-1">
+                                        <span className="w-10">{star} star</span>
+                                        <div className="flex-1 h-2 bg-gray-200 rounded">
+                                            <div
+                                                className="h-2 bg-yellow-400 rounded"
+                                                style={{ width: `${percent}%` }}
+                                            />
+                                        </div>
+                                        <span className="w-12 text-right">{percent.toFixed(0)}%</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {/* Reviews List */}
+                        <div className="md:col-span-2">
+                            {product.reviews?.length > 0 ? (
+                                <div className="space-y-4">
+                                    {product.reviews.map((review, index) => (
+                                        <div key={index} className="border p-4 rounded-lg shadow-sm flex flex-col gap-1">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <p className="font-semibold text-gray-800">{review.user}</p>
+                                                <span className="text-yellow-500 text-sm">
+                                                    {"★".repeat(review.rating)}
+                                                    {"☆".repeat(5 - review.rating)}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600">{new Date(review.date).toLocaleDateString()}</p>
+                                            <p className="mt-1 text-gray-800">{review.comment}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 italic">No reviews yet</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Write a Review */}
+                <div className="mt-10 bg-white p-6 rounded-xl shadow-md">
+                    <h3 className="text-2xl font-bold mb-4 text-gray-800">Write a Review</h3>
+                    <form onSubmit={handleReviewSubmit} className="space-y-4">
+                        {/* User Name */}
+                        <input
+                            type="text"
+                            value={reviewUser}
+                            onChange={(e) => setReviewUser(e.target.value)}
+                            placeholder="Your name"
+                            required
+                            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                        />
+                        {/* Star Rating */}
+                        <div className="flex items-center gap-1">
+                            <label className="text-gray-700 font-medium">Rating:</label>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                    key={star}
+                                    onClick={() => setReviewRating(star)}
+                                    className={`cursor-pointer text-2xl ${star <= reviewRating ? "text-yellow-400" : "text-gray-300"}`}
+                                >
+                                    ★
+                                </span>
+                            ))}
+                        </div>
+                        {/* Comment */}
+                        <textarea
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                            placeholder="Write your review..."
+                            required
+                            rows={4}
+                            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                        />
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="bg-yellow-500 text-white font-semibold px-6 py-2 rounded-lg hover:bg-yellow-600 transition disabled:opacity-60"
+                        >
+                            {submitting ? "Submitting..." : "Submit Review"}
+                        </button>
+                    </form>
+                </div>
+
+                {/* Delivery Info */}
+                <div className="mt-8 bg-gradient-to-r from-blue-100 to-indigo-100 p-8 rounded-3xl shadow-xl">
+                    <h3 className="text-2xl font-bold mb-2 text-indigo-700">Delivery Information</h3>
+                    <p className="text-gray-700">📦 Estimated Delivery: 3-5 Business Days</p>
+                    <p className="text-gray-700">🚚 Free Shipping on orders above ₹1000</p>
+                </div>
+
+                {/* Related Products */}
+                <div className="mt-10 bg-white p-8 rounded-3xl shadow-xl">
+                    <h3 className="text-2xl font-bold mb-2 text-indigo-700">Related Products</h3>
+                    <p className="text-gray-600 mb-4">Check out similar items that you might like.</p>
+                    <div className="overflow-x-auto scrollbar-hide">
+                        <div className="flex gap-6 w-max transition-all duration-300 ease-in-out">
+                            {similar && similar.map((product, index) => (
+                                <div
+                                    key={product.productId || product._id || index}
+                                    onClick={() => handleProductClick(product.productId || product._id)}
+                                    className="min-w-[200px] max-w-[200px] cursor-pointer rounded-lg p-4 shadow-sm hover:shadow-md transition group bg-gradient-to-br from-white to-indigo-50 border border-indigo-100 cursor-pointer"
+                                >
+                                    <img
+                                        src={product.image_url}
+                                        alt={product.productdisplayname}
+                                        className="w-full h-48 object-cover rounded-md mb-3 group-hover:scale-105 transition"
+                                    />
+                                    <h4 className="text-md font-semibold text-gray-800 truncate">{product.productdisplayname}</h4>
+                                    <p className="text-sm text-green-600">₹{product.price}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }

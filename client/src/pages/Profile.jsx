@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import profileIcon from "../components/profile.svg";
 
 const UserProfile = () => {
     const [user, setUser] = useState(null);
@@ -172,194 +173,103 @@ const UserProfile = () => {
     if (!user) return <p className="text-center text-gray-500 text-lg">No user data available</p>;
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-gray-50 shadow-lg rounded-lg mt-6">
-            <h2 className="text-3xl font-bold text-gray-800">User Profile</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                {/* Left - User Info */}
-                <div className="p-4 bg-white shadow-md rounded-lg">
-                    {isEditing ? (
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
-                                <label className="block text-gray-700 text-sm font-bold mb-1">First Name</label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={formData.firstName || ""}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-gray-700 text-sm font-bold mb-1">Last Name</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={formData.lastName || ""}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-gray-700 text-sm font-bold mb-1">Email</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email || ""}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-gray-700 text-sm font-bold mb-1">Phone</label>
-                                <input
-                                    type="tel"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber || ""}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-gray-700 text-sm font-bold mb-1">Gender</label>
-                                <select
-                                    name="gender"
-                                    value={formData.gender || ""}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-gray-700 text-sm font-bold mb-1">Date of Birth</label>
-                                <input
-                                    type="date"
-                                    name="dateOfBirth"
-                                    value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString().split('T')[0] : ""}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-gray-700 text-sm font-bold mb-1">Address</label>
-                                <textarea
-                                    name="Address"  // Note: matches capitalization in your original code
-                                    value={formData.Address || ""}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    rows="3"
-                                ></textarea>
-                            </div>
-                            
-                            {/* Password Change Section */}
-                            <div className="mt-6 mb-3">
-                                <div className="flex items-center">
-                                    <input 
-                                        type="checkbox" 
-                                        id="changePassword" 
-                                        checked={changePassword}
-                                        onChange={handlePasswordToggle}
-                                        className="mr-2"
-                                    />
-                                    <label htmlFor="changePassword" className="text-gray-700 font-bold">
-                                        Change Password
-                                    </label>
-                                </div>
-                            </div>
-
-                            {changePassword && (
-                                <div className="border-t pt-4 mt-4">
-                                    <h4 className="font-bold text-lg mb-3">Change Password</h4>
-                                    {passwordError && (
-                                        <p className="text-red-500 mb-3">{passwordError}</p>
-                                    )}
-                                    <div className="mb-3">
-                                        <label className="block text-gray-700 text-sm font-bold mb-1">Current Password</label>
-                                        <input
-                                            type="password"
-                                            name="oldPassword"
-                                            value={passwordData.oldPassword}
-                                            onChange={handlePasswordChange}
-                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            required={changePassword}
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="block text-gray-700 text-sm font-bold mb-1">New Password</label>
-                                        <input
-                                            type="password"
-                                            name="newPassword"
-                                            value={passwordData.newPassword}
-                                            onChange={handlePasswordChange}
-                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            required={changePassword}
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="block text-gray-700 text-sm font-bold mb-1">Confirm New Password</label>
-                                        <input
-                                            type="password"
-                                            name="confirmPassword"
-                                            value={passwordData.confirmPassword}
-                                            onChange={handlePasswordChange}
-                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            required={changePassword}
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </form>
-                    ) : (
-                        <>
-                            <h3 className="text-xl font-semibold">{user.firstName} {user.lastName}</h3>
-                            <p className="text-gray-700"><b>Email:</b> {user.email}</p>
-                            <p className="text-gray-700"><b>Phone:</b> {user.phoneNumber || "N/A"}</p>
-                            <p className="text-gray-700"><b>Gender:</b> {user.gender}</p>
-                            <p className="text-gray-700"><b>Date of Birth:</b> {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : "N/A"}</p>
-                            <p className="text-gray-700"><b>Address:</b> {user.Address || "N/A"}</p>
-                            <p className="text-gray-700"><b>Joined At:</b> {new Date(user.joinedAt).toLocaleDateString()}</p>
-                        </>
-                    )}
-                </div>
-
-                {/* Right - Actions */}
-                <div className="flex flex-col justify-center gap-4">
-                    {isEditing ? (
-                        <>
-                            <button 
-                                onClick={handleSubmit}
-                                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-                            >
-                                Save Changes
-                            </button>
-                            <button 
-                                onClick={handleCancel}
-                                className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-                            >
-                                Cancel
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button 
-                                onClick={handleEditToggle}
-                                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-                            >
-                                Edit Profile
-                            </button>
-                            <button
-                                onClick={handleLogout}
-                                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md"
-                            >
-                                Log Out
-                            </button>
-                        </>
-                    )}
-                </div>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-10 flex items-center justify-center">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 flex flex-col items-center w-full max-w-xl">
+                <img
+                    src={profileIcon}
+                    alt="Profile"
+                    className="w-32 h-32 rounded-full mb-6 shadow-lg border-4 border-indigo-100"
+                />
+                <h2 className="text-3xl font-bold text-indigo-700 mb-2">{user.firstName} {user.lastName}</h2>
+                <p className="text-lg text-gray-600 mb-4">{user.email}</p>
+                {isEditing ? (
+                    <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
+                        {/* First Name */}
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-1">First Name</label>
+                            <input type="text" name="firstName" value={formData.firstName || ""} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                        {/* Last Name */}
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
+                            <input type="text" name="lastName" value={formData.lastName || ""} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                        {/* Email */}
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-1">Email</label>
+                            <input type="email" name="email" value={formData.email || ""} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                        {/* Phone */}
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-1">Phone</label>
+                            <input type="tel" name="phoneNumber" value={formData.phoneNumber || ""} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                        {/* Gender */}
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-1">Gender</label>
+                            <select name="gender" value={formData.gender || ""} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        {/* Date of Birth */}
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-1">Date of Birth</label>
+                            <input type="date" name="dateOfBirth" value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString().split('T')[0] : ""} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                        {/* Address */}
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-1">Address</label>
+                            <textarea name="Address" value={formData.Address || ""} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                        </div>
+                        {/* Password Change Section (optional, as before) */}
+                        {/* ...password change fields if needed... */}
+                        <div className="flex gap-4 mt-6">
+                            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-full transition shadow-lg text-lg">Save Changes</button>
+                            <button type="button" onClick={handleCancel} className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full transition shadow-lg text-lg">Cancel</button>
+                        </div>
+                    </form>
+                ) : (
+                    <div className="w-full max-w-md space-y-3 mb-8">
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gray-700">Full Name:</span>
+                            <span className="text-gray-900">{user.firstName} {user.lastName}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gray-700">Email:</span>
+                            <span className="text-gray-900">{user.email}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gray-700">Phone:</span>
+                            <span className="text-gray-900">{user.phoneNumber || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gray-700">Gender:</span>
+                            <span className="text-gray-900 capitalize">{user.gender}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gray-700">Date of Birth:</span>
+                            <span className="text-gray-900">{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gray-700">Address:</span>
+                            <span className="text-gray-900">{user.Address || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gray-700">Joined At:</span>
+                            <span className="text-gray-900">{user.joinedAt ? new Date(user.joinedAt).toLocaleDateString() : "N/A"}</span>
+                        </div>
+                    </div>
+                )}
+                {/* Action Buttons */}
+                {!isEditing && (
+                    <div className="flex gap-4 mt-2">
+                        <button onClick={handleEditToggle} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-full transition shadow-lg text-lg">Edit Profile</button>
+                        <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-8 rounded-full transition shadow-lg text-lg">Log Out</button>
+                    </div>
+                )}
             </div>
         </div>
     );

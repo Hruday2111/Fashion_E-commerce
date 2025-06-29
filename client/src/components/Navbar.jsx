@@ -55,7 +55,7 @@ const Navbar = () => {
             <>
             <Link
               to="/cart"
-              className="text-gray-700 hover:text-blue-600 font-medium text-base transition-colors flex items-center"
+              className="flex items-center gap-2 px-5 py-2 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 font-semibold rounded-full shadow transition-all duration-200 hover:shadow-xl hover:scale-105 hover:ring-4 hover:ring-indigo-200"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +75,7 @@ const Navbar = () => {
             </Link>
             <Link
                 to="/orders"
-                className="text-gray-700 hover:text-blue-600 font-medium text-base transition-colors flex items-center"
+                className="flex items-center gap-2 px-5 py-2 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 font-semibold rounded-full shadow transition-all duration-200 hover:shadow-xl hover:scale-105 hover:ring-4 hover:ring-indigo-200"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" 
                 className="h-6 w-6 mr-1"
@@ -93,9 +93,16 @@ const Navbar = () => {
             {isLoggedIn ? (
               <Link
                 to="/profile"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="transition-colors"
               >
-                <img src={profileIcon} alt="Profile" className="w-7 h-7" />
+                <span className="w-10 h-10 rounded-full flex items-center justify-center bg-white transition-all duration-200 shadow-sm hover:shadow-lg hover:ring-4 hover:ring-indigo-200 hover:scale-110 hover:bg-blue-600">
+                  <img 
+                    src={profileIcon} 
+                    alt="Profile" 
+                    className="w-7 h-7 transition-all duration-200" 
+                    style={{ filter: 'invert(0)', transition: 'filter 0.2s' }}
+                  />
+                </span>
               </Link>
             ) : (
               <Link
@@ -113,6 +120,7 @@ const Navbar = () => {
       <div className="border-t border-gray-100 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <ul className="flex justify-center space-x-12 py-3 text-base font-medium">
+            {/*
             <li>
               <Link
                 to="/"
@@ -121,6 +129,7 @@ const Navbar = () => {
                 Home
               </Link>
             </li>
+            */}
             {/*
             <li>
               <Link
