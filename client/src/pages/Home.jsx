@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/autoplay';
-import { Autoplay } from 'swiper/modules';
+import 'swiper/css/pagination';
+import { Autoplay, Pagination } from 'swiper/modules';
 
 const Home = () => {
     const [winterCollection, setWinter] = useState([]);
@@ -132,7 +133,20 @@ const Home = () => {
         },
     ];
 
-    const ProductList = ({ products, title, icon }) => (
+    const quickCategories = [
+        { name: "Men's Clothing", icon: "👔", query: "men" },
+        { name: "Women's Dresses", icon: "👗", query: "dress" },
+        { name: "Footwear", icon: "👟", query: "shoes" },
+        { name: "Bags & Accessories", icon: "👜", query: "bag" },
+        { name: "Kids Fashion", icon: "👶", query: "kids" },
+        { name: "Sportswear", icon: "🏃‍♀️", query: "sports" }
+    ];
+
+    const brands = [
+        "Nike", "Adidas", "Zara", "H&M", "Uniqlo", "Levi's", "Gap", "Forever 21"
+    ];
+
+    const ProductList = ({ products, title, icon, showViewAll = true }) => (
         <div className="category-section mb-16">
             <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
@@ -141,12 +155,14 @@ const Home = () => {
                     </div>
                     <h3 className="text-2xl font-bold text-gray-800">{title}</h3>
                 </div>
-                <a href={`/shop/${title.toLowerCase().replace(" collection", "")}`} className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center group">
-                    View All
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                </a>
+                {showViewAll && (
+                    <a href={`/shop/${title.toLowerCase().replace(" collection", "").replace(" ", "-")}`} className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center group">
+                        View All
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                        </svg>
+                    </a>
+                )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.map((item, index) => (
@@ -159,6 +175,7 @@ const Home = () => {
                                 src={item.image_url}
                                 alt={item.productdisplayname}
                                 className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                                loading="lazy"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
@@ -190,8 +207,9 @@ const Home = () => {
             <section className="relative py-20 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <Swiper
-                        modules={[Autoplay]}
+                        modules={[Autoplay, Pagination]}
                         autoplay={{ delay: 3000, disableOnInteraction: false }}
+                        pagination={{ clickable: true }}
                         loop
                         className="max-w-4xl mx-auto text-center"
                     >
@@ -234,6 +252,80 @@ const Home = () => {
                             </SwiperSlide>
                         ))}
                     </Swiper>
+                </div>
+            </section>
+
+            {/* Quick Categories */}
+            <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-12">
+                    <span className="uppercase tracking-wider text-indigo-600 font-medium">Shop by Category</span>
+                    <h2 className="text-3xl md:text-4xl font-bold mt-2 text-gray-900">Quick Access</h2>
+                    <p className="text-gray-600 mt-4 max-w-2xl mx-auto">Find exactly what you're looking for with our curated categories</p>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {quickCategories.map((category, index) => (
+                        <div
+                            key={index}
+                            onClick={() => navigate(`/search?query=${category.query}`)}
+                            className="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                        >
+                            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{category.icon}</div>
+                            <h3 className="font-semibold text-gray-800 text-sm">{category.name}</h3>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Shop by Occasion */}
+            <section className="py-16 bg-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <span className="uppercase tracking-wider text-indigo-600 font-medium">Occasions</span>
+                        <h2 className="text-3xl md:text-4xl font-bold mt-2 text-gray-900">Dress for Every Moment</h2>
+                        <p className="text-gray-600 mt-4 max-w-2xl mx-auto">Find the perfect outfit for any occasion, from casual outings to special events</p>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div 
+                            onClick={() => navigate('/search?query=party')}
+                            className="group cursor-pointer"
+                        >
+                            <div className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl p-8 text-center text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                                <div className="text-5xl mb-4">🎉</div>
+                                <h3 className="text-xl font-bold mb-2">Party & Events</h3>
+                                <p className="text-purple-100 text-sm">Stunning outfits for celebrations</p>
+                            </div>
+                        </div>
+                        <div 
+                            onClick={() => navigate('/search?query=work')}
+                            className="group cursor-pointer"
+                        >
+                            <div className="bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl p-8 text-center text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                                <div className="text-5xl mb-4">💼</div>
+                                <h3 className="text-xl font-bold mb-2">Work & Office</h3>
+                                <p className="text-blue-100 text-sm">Professional attire for success</p>
+                            </div>
+                        </div>
+                        <div 
+                            onClick={() => navigate('/search?query=casual')}
+                            className="group cursor-pointer"
+                        >
+                            <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl p-8 text-center text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                                <div className="text-5xl mb-4">😊</div>
+                                <h3 className="text-xl font-bold mb-2">Casual & Daily</h3>
+                                <p className="text-green-100 text-sm">Comfortable everyday wear</p>
+                            </div>
+                        </div>
+                        <div 
+                            onClick={() => navigate('/search?query=wedding')}
+                            className="group cursor-pointer"
+                        >
+                            <div className="bg-gradient-to-br from-rose-400 to-red-500 rounded-2xl p-8 text-center text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                                <div className="text-5xl mb-4">💒</div>
+                                <h3 className="text-xl font-bold mb-2">Weddings & Formal</h3>
+                                <p className="text-rose-100 text-sm">Elegant formal wear</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -298,6 +390,24 @@ const Home = () => {
                             </div>
                             <div className="text-4xl">✨</div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Brand Showcase */}
+            <section className="py-16 bg-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <span className="uppercase tracking-wider text-indigo-600 font-medium">Our Brands</span>
+                        <h2 className="text-3xl md:text-4xl font-bold mt-2 text-gray-900">Trusted by Top Brands</h2>
+                        <p className="text-gray-600 mt-4 max-w-2xl mx-auto">We partner with the world's leading fashion brands to bring you the best quality products</p>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-8">
+                        {brands.map((brand, index) => (
+                            <div key={index} className="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <span className="font-semibold text-gray-700 text-sm">{brand}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>

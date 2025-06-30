@@ -4,6 +4,7 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,12 +17,15 @@ export function AuthProvider({ children }) {
         const data = await res.json();
         if (res.ok && data.success) {
           setIsLoggedIn(true);
+          setUser(data.user);
         } else {
           setIsLoggedIn(false);
+          setUser(null);
         }
       } catch (err) {
         console.error("Auth check failed:", err);
         setIsLoggedIn(false);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -31,7 +35,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, loading }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, setUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

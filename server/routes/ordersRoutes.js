@@ -3,11 +3,19 @@ const router = express.Router();
 
 const {
     createOrder,
-    getAllOrdersByUserId
+    getAllOrdersByUserId,
+    getAllOrders,
+    updateOrderStatus
 } = require('../controllers/orderController')
 
-router.get('/',getAllOrdersByUserId)
+const adminMiddleware = require('../middleware/adminMiddleware');
 
-router.post('/create',createOrder)
+// User routes (require authentication)
+router.get('/', getAllOrdersByUserId)
+router.post('/create', createOrder)
+
+// Admin routes (require admin authentication)
+router.get('/admin', adminMiddleware, getAllOrders)
+router.patch('/admin/:id', adminMiddleware, updateOrderStatus)
 
 module.exports = router

@@ -28,12 +28,14 @@ const signup = async(req,res) => {
 }
 
 const signin = async (req, res) => {
+    console.log("Signin endpoint hit", req.body); // Debug log
     try {
         const { email, password } = req.body;
 
         // Find the user by email
         const user = await profileModel.findOne({ email });
         if (!user || !(await user.comparePassword(password))) {
+            console.log("Invalid email or password"); // Debug log
             return res.status(401).json({ error: 'dudeeeeeee Invalid email or password' });
         }
 
@@ -49,10 +51,20 @@ const signin = async (req, res) => {
             maxAge: 3600000, // Cookie expires in 1 hour (adjust as needed)
         });
 
-        // Return success response (you might include user info as needed)
-        res.json({ success: true, userId: user.userId });
+        // Return success response with user info including role
+        console.log("Login successful for user:", user.email, "role:", user.role); // Debug log
+        res.json({ 
+            success: true, 
+            userId: user.userId,
+            user: {
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
+            }
+        });
     } catch (err) {
-        console.error(err);
+        console.error("Signin error:", err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
@@ -63,13 +75,28 @@ const signedIn = async (req, res) => {
     console.log("Extracted Token:", token); // Log extracted token
   
     try {
-        const user = jwt.verify(token, process.env.JWT_Secret);
-        res.json({ success: true, user });
-      } catch (err) {
+        const decoded = jwt.verify(token, process.env.JWT_Secret);
+        
+        // Fetch full user data from database
+        const user = await profileModel.findOne({ userId: decoded.userId });
+        if (!user) {
+            return res.json({ success: false });
+        }
+        
+        res.json({ 
+            success: true, 
+            user: {
+                userId: user.userId,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
+            }
+        });
+    } catch (err) {
         console.error("JWT Error:", err); // <- this will give you the actual cause
         res.json({ success: false });
-      }
-      
+    }
 };
   
 const getProfileById = async (req, res) => {

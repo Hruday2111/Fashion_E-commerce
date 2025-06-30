@@ -6,8 +6,8 @@ import { useAuth } from "../context/AuthContext";
 const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate(); // Hook to navigate
-  const { isLoggedIn } = useAuth();
-
+  const { user, isLoggedIn } = useAuth();
+  console.log("Navbar AuthContext user:", user, "isLoggedIn:", isLoggedIn); // Debug log
 
   // Function to handle search
   const handleSearch = () => {
@@ -22,58 +22,59 @@ const Navbar = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link
-              to="/"
-              className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 transition-all"
-            >
+            <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 cursor-default">
               ShopEase
-            </Link>
+            </span>
           </div>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-md mx-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search for products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
-              />
-              <button
-                onClick={handleSearch}
-                className="absolute right-0 top-0 h-full px-4 bg-blue-600 text-white rounded-r-full hover:bg-blue-700 transition-colors text-base font-medium"
-              >
-                Search
-              </button>
+          {/* Search Bar - Only show for non-admin users */}
+          {user?.role !== 'admin' && (
+            <div className="flex-1 max-w-md mx-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search for products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="absolute right-0 top-0 h-full px-4 bg-blue-600 text-white rounded-r-full hover:bg-blue-700 transition-colors text-base font-medium"
+                >
+                  Search
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Icons (Cart & User) */}
           <div className="flex items-center space-x-6">
             {(isLoggedIn && 
             <>
-            <Link
-              to="/cart"
-              className="flex items-center gap-2 px-5 py-2 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 font-semibold rounded-full shadow transition-all duration-200 hover:shadow-xl hover:scale-105 hover:ring-4 hover:ring-indigo-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {user?.role !== 'admin' && (
+              <>
+              <Link
+                to="/cart"
+                className="flex items-center gap-2 px-5 py-2 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 font-semibold rounded-full shadow transition-all duration-200 hover:shadow-xl hover:scale-105 hover:ring-4 hover:ring-indigo-200"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-              Cart
-            </Link>
-            <Link
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 mr-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+                Cart
+              </Link>
+              <Link
                 to="/orders"
                 className="flex items-center gap-2 px-5 py-2 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 font-semibold rounded-full shadow transition-all duration-200 hover:shadow-xl hover:scale-105 hover:ring-4 hover:ring-indigo-200"
               >
@@ -86,6 +87,8 @@ const Navbar = () => {
                 </svg>
                 Orders
               </Link>
+              </>
+            )}
             </>
             )}
 

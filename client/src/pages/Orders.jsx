@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -7,6 +7,7 @@ const Orders = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -49,6 +50,12 @@ const Orders = () => {
 
     return matchesSearch && matchesTab;
   });
+
+  const handleProductClick = (productId) => {
+    if (productId) {
+      navigate(`/product/${productId}`);
+    }
+  };
 
   const getDeliveryDate = (createdAt, orderStatus) => {
     const orderDate = new Date(createdAt);
@@ -202,7 +209,8 @@ const Orders = () => {
                       <img
                         src={item.image_url || 'https://via.placeholder.com/100'}
                         alt={item.productName || 'Product'}
-                        className="w-24 h-24 object-cover rounded-lg shadow-sm border"
+                        className="w-24 h-24 object-cover rounded-lg shadow-sm border cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => handleProductClick(item.productId)}
                         onError={(e) => {
                           e.target.src = 'https://via.placeholder.com/100';
                         }}
@@ -210,7 +218,10 @@ const Orders = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                           <div>
-                            <div className="text-lg font-semibold text-gray-800 mb-2">
+                            <div 
+                              className="text-lg font-semibold text-gray-800 mb-2 cursor-pointer hover:text-indigo-600 transition-colors"
+                              onClick={() => handleProductClick(item.productId)}
+                            >
                               {item.productName || 'Product Name'}
                             </div>
                             <div className="text-sm text-gray-600 mb-1">Size: {item.size || 'Standard'}</div>

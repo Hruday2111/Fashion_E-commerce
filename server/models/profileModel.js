@@ -16,7 +16,8 @@ const userProfileSchema = new mongoose.Schema(
     // Google OAuth fields
     googleId: { type: String, sparse: true },
     profilePicture: { type: String, default: '' },
-    isGoogleUser: { type: Boolean, default: false }
+    isGoogleUser: { type: Boolean, default: false },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' }
   },
   { timestamps: true }
 );
