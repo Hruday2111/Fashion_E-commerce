@@ -16,9 +16,31 @@ const { jwtAuthMiddleware } = require("./middleware/jwtmiddleware");
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174", "https://shopease-red.vercel.app"],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "http://localhost:5174", 
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "https://shopease-red.vercel.app",
+        "https://shopease-du5gjkunx-priyanshus-projects-4565e17d.vercel.app"
+      ];
+      
+      // Allow any Vercel subdomain
+      const isVercelDomain = origin.match(/^https:\/\/.*\.vercel\.app$/);
+      
+      if (allowedOrigins.includes(origin) || isVercelDomain) {
+        callback(null, true);
+      } else {
+        console.log('CORS blocked origin:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"], // Added OPTIONS for preflight requests
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
