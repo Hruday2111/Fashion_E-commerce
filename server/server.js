@@ -16,7 +16,7 @@ const { jwtAuthMiddleware } = require("./middleware/jwtmiddleware");
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174", "https://shopease-red.vercel.app"],
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"], // Added OPTIONS for preflight requests
     allowedHeaders: ["Content-Type", "Authorization"]
