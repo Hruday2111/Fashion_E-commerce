@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import API_BASE from '../config/api';
 
 const GoogleAuthContext = createContext();
 
@@ -21,7 +22,7 @@ export const GoogleAuthProvider = ({ children }) => {
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/profile/google-signin', {
+      const response = await fetch(`${API_BASE}/api/profile/google-signin`, {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import API_BASE from "../config/api";
 
 const ProductDetails = () => {
     const { isLoggedIn } = useAuth();
@@ -29,7 +30,7 @@ const ProductDetails = () => {
 
         const fetchProduct = async () => {
             try {
-                const response1 = await fetch(`http://localhost:4000/api/product/getProductById?query=${id}`);
+                const response1 = await fetch(`${API_BASE}/api/product/getProductById?query=${id}`);
                 if (!response1.ok) throw new Error("Failed to fetch product");
                 const data1 = await response1.json();
                 setProduct(data1);
@@ -43,7 +44,7 @@ const ProductDetails = () => {
                 }).toString();
                 
                 const response2 = await fetch(
-                    `http://localhost:4000/api/product/filteredProducts?${queryParams}`
+                    `${API_BASE}/api/product/filteredProducts?${queryParams}`
                 );
                 if (!response2.ok) throw new Error("Failed to fetch product");
                 const data2 = await response2.json();
@@ -81,7 +82,7 @@ const ProductDetails = () => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const res = await fetch(`http://localhost:4000/api/product/review?query=${id}`, {
+            const res = await fetch(`${API_BASE}/api/product/review?query=${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -134,7 +135,7 @@ const ProductDetails = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:4000/api/cart/add/?productId=${id}`, {
+            const response = await fetch(`${API_BASE}/api/cart/add/?productId=${id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

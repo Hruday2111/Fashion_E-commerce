@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_BASE from '../config/api';
 
 export default function BuyNow() {
   const { id } = useParams();
@@ -39,7 +40,7 @@ export default function BuyNow() {
 
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/product/getProductById?query=${id}`);
+        const res = await fetch(`${API_BASE}/api/product/getProductById?query=${id}`);
         if (!res.ok) throw new Error("Failed to fetch product");
         
         const data = await res.json();
@@ -119,7 +120,7 @@ export default function BuyNow() {
 
       console.log('Sending order data:', orderData);
 
-      const response = await fetch('http://localhost:4000/api/orders/create', {
+      const response = await fetch(`${API_BASE}/api/orders/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

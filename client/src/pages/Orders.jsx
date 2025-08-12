@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API_BASE from '../config/api';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -12,7 +13,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch('http://localhost:4000/api/orders/', {
+        const res = await fetch(`${API_BASE}/api/orders/`, {
           credentials: 'include',
         });
         if (!res.ok) {

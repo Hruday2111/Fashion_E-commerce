@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import API_BASE from '../config/api';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -37,7 +38,7 @@ const AdminDashboard = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/orders/admin', {
+      const response = await fetch(`${API_BASE}/api/orders/admin`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -55,7 +56,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:4000/api/products/admin/products?page=${currentPage}`,
+        `${API_BASE}/api/products/admin/products?page=${currentPage}`,
         { credentials: 'include' }
       );
       const data = await response.json();
@@ -73,7 +74,7 @@ const AdminDashboard = () => {
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       console.log('Updating order status:', orderId, 'to:', newStatus);
-      const response = await fetch(`http://localhost:4000/api/orders/admin/${orderId}`, {
+      const response = await fetch(`${API_BASE}/api/orders/admin/${orderId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -101,7 +102,7 @@ const AdminDashboard = () => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:4000/api/products/admin/products', {
+      const response = await fetch(`${API_BASE}/api/products/admin/products`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -141,7 +142,7 @@ const AdminDashboard = () => {
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:4000/api/products/admin/products/${editingProduct.productId}`, {
+      const response = await fetch(`${API_BASE}/api/products/admin/products/${editingProduct.productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -184,7 +185,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/api/products/admin/products/${productId}`, {
+      const response = await fetch(`${API_BASE}/api/products/admin/products/${productId}`, {
         method: 'DELETE',
         credentials: 'include'
       });

@@ -5,6 +5,7 @@ import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/pagination';
 import { Autoplay, Pagination } from 'swiper/modules';
+import API_BASE from '../config/api';
 
 const Home = () => {
     const [winterCollection, setWinter] = useState([]);
@@ -23,7 +24,7 @@ const Home = () => {
             try {
                 const fetchCategory = async (category, count) => {
                     const response = await fetch(
-                        `http://localhost:4000/api/product/filteredProducts?query=${category}&count=${count}`
+                        `${API_BASE}/api/product/filteredProducts?query=${category}&count=${count}`
                     );
                     if (!response.ok) {
                         throw new Error(`Failed to fetch ${category} products`);
@@ -58,7 +59,7 @@ const Home = () => {
 
     const handleAddToCart = async (productId) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/cart/add/?productId=${productId}`, {
+            const response = await fetch(`${API_BASE}/api/cart/add/?productId=${productId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

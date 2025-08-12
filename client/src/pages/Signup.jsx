@@ -5,6 +5,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
 import GoogleSignIn from "../components/GoogleSignIn";
+import API_BASE from "../config/api";
 
 export default function SignupPage() {
   const { setIsLoggedIn } = useAuth();
@@ -15,7 +16,7 @@ export default function SignupPage() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/profile/signup', {
+      const response = await fetch(`${API_BASE}/api/profile/signup`, {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { useAuth } from "../context/AuthContext"; // Import it
 import GoogleSignIn from "../components/GoogleSignIn"; // Import GoogleSignIn component
+import API_BASE from "../config/api";
 
 export default function LoginPage() {
   const { setUser, setIsLoggedIn } = useAuth(); // Get the setter for user data and login state
@@ -16,7 +17,7 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/profile/signin', {
+      const response = await fetch(`${API_BASE}/api/profile/signin`, {
         method: 'POST',
         credentials: 'include',
         headers: {

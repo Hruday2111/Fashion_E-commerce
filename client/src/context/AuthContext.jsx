@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import API_BASE from "../config/api";
 
 const AuthContext = createContext();
 
@@ -10,7 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/profile/check-auth", {
+        const res = await fetch(`${API_BASE}/api/profile/check-auth`, {
           credentials: "include", // important to send cookies
         });
 

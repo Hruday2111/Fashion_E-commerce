@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import API_BASE from '../config/api';
 
 const Cart = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Cart = () => {
         const fetchCartItems = async () => {
             try {
                 // Use the correct endpoint as per your cartRoute
-                const response = await fetch('http://localhost:4000/api/cart/', {
+                const response = await fetch(`${API_BASE}/api/cart/`, {
                     credentials: 'include' // Important for sending cookies/auth tokens
                 });
                 
@@ -73,7 +74,7 @@ const Cart = () => {
     const handleRemoveItem = async (productId) => {
         try {
             // Use the delete endpoint from cartRoute
-            const response = await fetch(`http://localhost:4000/api/cart/delete?productId=${productId}`, {
+            const response = await fetch(`${API_BASE}/api/cart/delete?productId=${productId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });

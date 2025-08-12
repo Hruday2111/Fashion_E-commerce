@@ -206,6 +206,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_BASE from '../config/api';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -234,7 +235,7 @@ export default function Checkout() {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/cart/', {
+        const response = await fetch(`${API_BASE}/api/cart/`, {
           credentials: 'include'
         });
         
@@ -350,7 +351,7 @@ export default function Checkout() {
 
       console.log('Sending order data:', orderData);
 
-      const response = await fetch('http://localhost:4000/api/orders/create', {
+      const response = await fetch(`${API_BASE}/api/orders/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import API_BASE from '../config/api';
 
 const SearchedProducts = () => {
     const location = useLocation();
@@ -39,7 +40,7 @@ const SearchedProducts = () => {
 
     const handleAddToCart = async (productId) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/cart/add/?productId=${productId}`, {
+            const response = await fetch(`${API_BASE}/api/cart/add/?productId=${productId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -174,7 +175,7 @@ const SearchedProducts = () => {
             if (!searchQuery) return;
             try {
                 const response = await fetch(
-                    `http://localhost:4000/api/product/filteredProducts?query=${encodeURIComponent(searchQuery)}&count=${count}`
+                    `${API_BASE}/api/product/filteredProducts?query=${encodeURIComponent(searchQuery)}&count=${count}`
                 );
                 if (!response.ok) throw new Error("Failed to fetch products");
 

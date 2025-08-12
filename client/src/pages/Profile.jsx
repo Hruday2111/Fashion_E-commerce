@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import profileIcon from "../components/profile.svg";
+import API_BASE from "../config/api";
 
 const UserProfile = () => {
     const [user, setUser] = useState(null);
@@ -22,7 +23,7 @@ const UserProfile = () => {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const response = await fetch("http://localhost:4000/api/profile/", {
+                const response = await fetch(`${API_BASE}/api/profile/`, {
                     method: "GET",
                     credentials: "include", // Ensures cookies (JWT) are sent with the request
                 });
@@ -42,7 +43,7 @@ const UserProfile = () => {
 
     const handleLogout = async () => {
         try {
-            const res = await fetch("http://localhost:4000/api/Profile/logout", {
+            const res = await fetch(`${API_BASE}/api/Profile/logout`, {
                 method: "POST",
                 credentials: "include", // Important: sends the cookie
             });
@@ -131,7 +132,7 @@ const UserProfile = () => {
                 dataToUpdate.newPassword = passwordData.newPassword;
             }
 
-            const response = await fetch("http://localhost:4000/api/profile/update", {
+            const response = await fetch(`${API_BASE}/api/profile/update`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
